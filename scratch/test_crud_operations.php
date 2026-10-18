@@ -40,6 +40,21 @@ function assertCondition(bool $cond, string $message) {
     }
 }
 
+function createTestTopic(PDO $db, string $maDeTai, string $tenDeTai, string $maDot, string $maHuongNC, string $maGVHD, string $leaderSV, string $status = 'CHO_GVHD_DUYET') {
+    $stmt = $db->prepare("INSERT INTO DeTai (MaDeTai, TenDeTai, MaDot, MaHuongNC, MaGVHD, KinhPhiDuKien, MucTieu, SanPhamDuKien, TrangThai)
+                          VALUES (:madetai, :tendetai, :madot, :mahuong, :magvhd, 5000000, 'Mục tiêu', 'Sản phẩm', :trangthai)");
+    $stmt->execute([
+        'madetai' => $maDeTai,
+        'tendetai' => $tenDeTai,
+        'madot' => $maDot,
+        'mahuong' => $maHuongNC,
+        'magvhd' => $maGVHD,
+        'trangthai' => $status
+    ]);
+    $stmtTv = $db->prepare("INSERT INTO ThanhVienDeTai (MaDeTai, MaSV, VaiTro, NhiemVuCuThe) VALUES (:madetai, :masv, 'TRUONG_NHOM', 'Chủ trì')");
+    $stmtTv->execute(['madetai' => $maDeTai, 'masv' => $leaderSV]);
+}
+
 echo "=== STARTING COMPREHENSIVE CRUD VERIFICATION ===\n";
 
 $dotModel = new DotNCKHModel();
@@ -49,6 +64,21 @@ $khenThuongModel = new KhenThuongModel();
 $userModel = new UserModel();
 $tienDoModel = new BaoCaoTienDoModel();
 $tongKetModel = new BaoCaoTongKetModel();
+
+if (!$userModel->findById('GV_TEST')) {
+    $userModel->registerUser([
+        'MaNguoiDung' => 'GV_TEST',
+        'MatKhauHash' => password_hash('123456', PASSWORD_BCRYPT),
+        'HoTen' => 'TS. Giảng Viên Test',
+        'Email' => 'gv_test_' . time() . '@example.com',
+        'SoDienThoai' => '0912345678',
+        'VaiTro' => 'GIANG_VIEN',
+        'TrangThai' => 'HOAT_DONG'
+    ], [
+        'HocVi' => 'Tiến sĩ',
+        'DonViCongTac' => 'Khoa Công nghệ Thông tin'
+    ]);
+}
 
 // -------------------------------------------------------------
 // TEST 1: Batch (DotNCKH) cascading delete with topics & councils
@@ -87,20 +117,7 @@ assertCondition($hoiDongModel->findById($testHd) !== null, "Created test council
 
 // Create topic in this batch
 $testDt = 'DT_TEST_' . time();
-$deTaiModel->register([
-    'MaDeTai' => $testDt,
-    'TenDeTai' => 'Đề tài Test Cascade Batch',
-    'MaDot' => $testDot,
-    'MaHuongNC' => 'HNC_AI',
-    'MaGVHD' => 'GV004',
-    'KinhPhiDuKien' => 5000000,
-    'MucTieu' => 'Mục tiêu test',
-    'SanPhamDuKien' => 'Sản phẩm test',
-    'ChiTietDeXuat' => json_encode(['tinh_cap_thiet' => 'Test']),
-    'ChiTietThuyetMinh' => json_encode(['tong_quan' => 'Test'])
-], [
-    ['MaSV' => 'SV001', 'VaiTro' => 'TRUONG_NHOM']
-]);
+createTestTopic($db, $testDt, 'Đề tài Test Cascade Batch', $testDot, 'HNC_AI', 'GV_TEST', 'SV001');
 assertCondition($deTaiModel->findById($testDt) !== null, "Created topic {$testDt} in batch");
 
 // Assign topic to council
@@ -153,20 +170,7 @@ assertCondition($db->query("SELECT * FROM HuongNghienCuu WHERE MaHuongNC = '$tes
 // Create a topic referencing this direction
 $testDtHnc = 'DT_HNC_' . time();
 $activeDot = $dotModel->getActive()[0]['MaDot'] ?? 'DOT_2026_01';
-$deTaiModel->register([
-    'MaDeTai' => $testDtHnc,
-    'TenDeTai' => 'Đề tài gắn HNC Test',
-    'MaDot' => $activeDot,
-    'MaHuongNC' => $testHnc,
-    'MaGVHD' => 'GV001',
-    'KinhPhiDuKien' => 3000000,
-    'MucTieu' => 'Mục tiêu',
-    'SanPhamDuKien' => 'Sản phẩm',
-    'ChiTietDeXuat' => json_encode(['tinh_cap_thiet' => 'Test']),
-    'ChiTietThuyetMinh' => json_encode(['tong_quan' => 'Test'])
-], [
-    ['MaSV' => 'SV001', 'VaiTro' => 'TRUONG_NHOM']
-]);
+createTestTopic($db, $testDtHnc, 'Đề tài gắn HNC Test', $activeDot, $testHnc, 'GV001', 'SV001');
 assertCondition($deTaiModel->findById($testDtHnc) !== null, "Created topic referencing {$testHnc}");
 
 // Delete direction -> topic should be reassigned to HNC_KHAC, direction deleted
@@ -212,20 +216,7 @@ assertCondition($updatedHd['TenHoiDong'] === 'Hội đồng Test CRUD (Đã Cậ
 
 // Assign a topic
 $testDtCouncil = 'DT_HD_' . time();
-$deTaiModel->register([
-    'MaDeTai' => $testDtCouncil,
-    'TenDeTai' => 'Đề tài Phân công HĐ',
-    'MaDot' => $activeDot,
-    'MaHuongNC' => 'HNC_AI',
-    'MaGVHD' => 'GV004',
-    'KinhPhiDuKien' => 2000000,
-    'MucTieu' => 'Test',
-    'SanPhamDuKien' => 'Test',
-    'ChiTietDeXuat' => json_encode([]),
-    'ChiTietThuyetMinh' => json_encode([])
-], [
-    ['MaSV' => 'SV001', 'VaiTro' => 'TRUONG_NHOM']
-]);
+createTestTopic($db, $testDtCouncil, 'Đề tài Phân công HĐ', $activeDot, 'HNC_AI', 'GV_TEST', 'SV001');
 $hoiDongModel->assignTopic([
     'MaHoiDong' => $testHd2,
     'MaDeTai' => $testDtCouncil,
@@ -270,20 +261,7 @@ $deTaiModel->deleteTopic($testDtCouncil);
 // -------------------------------------------------------------
 echo "\n--- TEST 4: Award CRUD (KhenThuongModel) ---\n";
 $testDtAward = 'DT_AWD_' . time();
-$deTaiModel->register([
-    'MaDeTai' => $testDtAward,
-    'TenDeTai' => 'Đề tài Test Khen Thưởng',
-    'MaDot' => $activeDot,
-    'MaHuongNC' => 'HNC_AI',
-    'MaGVHD' => 'GV001',
-    'KinhPhiDuKien' => 1000000,
-    'MucTieu' => 'Test',
-    'SanPhamDuKien' => 'Test',
-    'ChiTietDeXuat' => json_encode([]),
-    'ChiTietThuyetMinh' => json_encode([])
-], [
-    ['MaSV' => 'SV001', 'VaiTro' => 'TRUONG_NHOM']
-]);
+createTestTopic($db, $testDtAward, 'Đề tài Test Khen Thưởng', $activeDot, 'HNC_AI', 'GV001', 'SV001');
 
 $khenThuongModel->saveAward([
     'MaDeTai' => $testDtAward,
@@ -309,20 +287,7 @@ $deTaiModel->deleteTopic($testDtAward);
 // -------------------------------------------------------------
 echo "\n--- TEST 5: Progress Report & Final Report CRUD ---\n";
 $testDtReport = 'DT_REP_' . time();
-$deTaiModel->register([
-    'MaDeTai' => $testDtReport,
-    'TenDeTai' => 'Đề tài Test Báo Cáo',
-    'MaDot' => $activeDot,
-    'MaHuongNC' => 'HNC_AI',
-    'MaGVHD' => 'GV001',
-    'KinhPhiDuKien' => 1000000,
-    'MucTieu' => 'Test',
-    'SanPhamDuKien' => 'Test',
-    'ChiTietDeXuat' => json_encode([]),
-    'ChiTietThuyetMinh' => json_encode([])
-], [
-    ['MaSV' => 'SV001', 'VaiTro' => 'TRUONG_NHOM']
-]);
+createTestTopic($db, $testDtReport, 'Đề tài Test Báo Cáo', $activeDot, 'HNC_AI', 'GV001', 'SV001');
 
 // Progress Report
 $tienDoModel->createReport([
@@ -378,20 +343,7 @@ assertCondition($userModel->findById($testUser) !== null, "Created test student 
 
 // Create a topic where this test student is TRUONG_NHOM
 $testDtUser = 'DT_U_' . time();
-$deTaiModel->register([
-    'MaDeTai' => $testDtUser,
-    'TenDeTai' => 'Đề tài của test user',
-    'MaDot' => $activeDot,
-    'MaHuongNC' => 'HNC_AI',
-    'MaGVHD' => 'GV001',
-    'KinhPhiDuKien' => 1000000,
-    'MucTieu' => 'Test',
-    'SanPhamDuKien' => 'Test',
-    'ChiTietDeXuat' => json_encode([]),
-    'ChiTietThuyetMinh' => json_encode([])
-], [
-    ['MaSV' => $testUser, 'VaiTro' => 'TRUONG_NHOM']
-]);
+createTestTopic($db, $testDtUser, 'Đề tài của test user', $activeDot, 'HNC_AI', 'GV001', $testUser);
 assertCondition($deTaiModel->findById($testDtUser) !== null, "Created topic with {$testUser} as leader");
 
 // Delete user with cascading
