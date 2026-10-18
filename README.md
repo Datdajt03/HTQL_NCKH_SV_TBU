@@ -16,7 +16,7 @@
 
 ---
 
-## 📌 Bài toán đặt ra
+## Bài toán đặt ra
 
 **1. Mô tả quy trình hệ thống**
 
@@ -55,7 +55,7 @@ GVHD tiếp nhận yêu cầu, xem xét đề tài và tiến hành xét duyệt
 
 ---
 
-## 🏗️ Cấu trúc hệ thống & Luồng hoạt động trực quan
+## Cấu trúc hệ thống & Luồng hoạt động trực quan
 
 ### 1. Kiến trúc phân tầng (Mô hình MVC chuẩn)
 ```mermaid
@@ -97,7 +97,7 @@ flowchart LR
 
 ---
 
-## 🚀 Hướng dẫn cài đặt & chạy thử
+## Hướng dẫn cài đặt & chạy thử
 
 ### 1. Yêu cầu môi trường
 - Đã cài đặt [XAMPP](https://www.apachefriends.org/) (hỗ trợ PHP 8.x và MySQL / MariaDB).
