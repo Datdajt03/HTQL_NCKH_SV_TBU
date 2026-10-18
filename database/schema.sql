@@ -140,7 +140,7 @@ CREATE TABLE `DeTai` (
         'CHO_GVHD_DUYET', 'GVHD_TU_CHOI', 'CHO_THAM_DINH', 'YEU_CAU_CHINH_SUA', 
         'DA_PHE_DUYET', 'DANG_THUC_HIEN', 'CHO_NGHIEM_THU', 'DA_NGHIEM_THU', 'HUY'
     )),
-    CONSTRAINT `fk_detai_dot` FOREIGN KEY (`MaDot`) REFERENCES `DotNCKH` (`MaDot`) ON UPDATE CASCADE,
+    CONSTRAINT `fk_detai_dot` FOREIGN KEY (`MaDot`) REFERENCES `DotNCKH` (`MaDot`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_detai_huongnc` FOREIGN KEY (`MaHuongNC`) REFERENCES `HuongNghienCuu` (`MaHuongNC`) ON UPDATE CASCADE,
     CONSTRAINT `fk_detai_gvhd` FOREIGN KEY (`MaGVHD`) REFERENCES `GiangVien` (`MaGV`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -240,7 +240,7 @@ CREATE TABLE `HoiDong` (
     PRIMARY KEY (`MaHoiDong`),
     CONSTRAINT `chk_loai_hoidong` CHECK (`LoaiHoiDong` IN ('THAM_DINH', 'NGHIEM_THU')),
     CONSTRAINT `chk_trangthai_hd` CHECK (`TrangThai` IN ('HOAT_DONG', 'HOAN_THANH')),
-    CONSTRAINT `fk_hoidong_dot` FOREIGN KEY (`MaDot`) REFERENCES `DotNCKH` (`MaDot`) ON UPDATE CASCADE
+    CONSTRAINT `fk_hoidong_dot` FOREIGN KEY (`MaDot`) REFERENCES `DotNCKH` (`MaDot`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `ThanhVienHoiDong` (
@@ -266,8 +266,8 @@ CREATE TABLE `PhanCongHoiDong` (
     UNIQUE KEY `uk_phancong_detai` (`MaDeTai`),
     KEY `idx_phancong_mahd` (`MaHoiDong`),
     CONSTRAINT `chk_ketluan` CHECK (`KetLuan` IS NULL OR `KetLuan` IN ('DAT', 'KHONG_DAT', 'BAO_VE_LAI')),
-    CONSTRAINT `fk_phancong_hoidong` FOREIGN KEY (`MaHoiDong`) REFERENCES `HoiDong` (`MaHoiDong`) ON UPDATE CASCADE,
-    CONSTRAINT `fk_phancong_detai` FOREIGN KEY (`MaDeTai`) REFERENCES `DeTai` (`MaDeTai`) ON UPDATE CASCADE
+    CONSTRAINT `fk_phancong_hoidong` FOREIGN KEY (`MaHoiDong`) REFERENCES `HoiDong` (`MaHoiDong`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_phancong_detai` FOREIGN KEY (`MaDeTai`) REFERENCES `DeTai` (`MaDeTai`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `PhieuDanhGia` (
@@ -289,7 +289,7 @@ CREATE TABLE `PhieuDanhGia` (
     CONSTRAINT `chk_diem_sanpham` CHECK (`DiemSanPham` BETWEEN 0 AND 30),
     CONSTRAINT `chk_diem_baocao` CHECK (`DiemBaoCao` BETWEEN 0 AND 20),
     CONSTRAINT `fk_phieudg_phancong` FOREIGN KEY (`MaPhanCong`) REFERENCES `PhanCongHoiDong` (`MaPhanCong`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_phieudg_giamkhao` FOREIGN KEY (`MaGiamKhao`) REFERENCES `NguoiDung` (`MaNguoiDung`) ON UPDATE CASCADE
+    CONSTRAINT `fk_phieudg_giamkhao` FOREIGN KEY (`MaGiamKhao`) REFERENCES `NguoiDung` (`MaNguoiDung`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `KetQuaKhenThuong` (

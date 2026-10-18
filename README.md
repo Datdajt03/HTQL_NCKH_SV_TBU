@@ -4,25 +4,54 @@
   </a>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://nst.utb.edu.vn/gioi-thieu.html" target="_blank">
-    <img src="pic/logo-khoa.png" alt="Khoa Nông - Sinh - Công nghệ" height="85">
+    <img src="pic/logo-khoa.png" alt="Khoa Tự nhiên và Công nghệ" height="85">
   </a>
 </p>
 
 <h1 align="center">Hệ Thống Quản Lý Nghiên Cứu Khoa Học Sinh Viên<br>Trường Đại Học Tây Bắc (UTB)</h1>
 
 <p align="center">
-  <b>Đơn vị đào tạo & nghiên cứu:</b> <a href="https://utb.edu.vn/" target="_blank">Trường Đại học Tây Bắc</a> | <a href="https://nst.utb.edu.vn/gioi-thieu.html" target="_blank">Khoa Nông - Sinh - Công nghệ</a>
+  <b>Đơn vị đào tạo & nghiên cứu:</b> <a href="https://utb.edu.vn/" target="_blank">Trường Đại học Tây Bắc</a> | <a href="https://nst.utb.edu.vn/gioi-thieu.html" target="_blank">Khoa Tự nhiên và Công nghệ</a>
 </p>
 
 ---
 
 ## 📌 Bài toán đặt ra
 
-Hệ thống tin học hóa và chuẩn hóa toàn diện quy trình quản lý hoạt động Nghiên cứu Khoa học (NCKH) của sinh viên tại **Trường Đại học Tây Bắc**, kết nối xuyên suốt 3 nhóm người dùng:
+**1. Mô tả quy trình hệ thống**
 
-- **Sinh viên**: Nộp hồ sơ đăng ký đề tài trực tuyến (Phiếu đề xuất & Thuyết minh), cập nhật báo cáo tiến độ định kỳ, nộp sản phẩm nghiệm thu và tra cứu kết quả khen thưởng.
-- **Giảng viên hướng dẫn (GVHD)**: Tiếp nhận duyệt hồ sơ hướng dẫn, theo dõi và nhận xét tiến độ thực hiện đề tài của các nhóm nghiên cứu.
-- **Cán bộ Quản lý (Phòng QLKH / Ban chủ nhiệm Khoa)**: Ban hành các đợt NCKH, thẩm định phê duyệt đề tài, thành lập Hội đồng nghiệm thu, nhập điểm đánh giá và xét duyệt khen thưởng.
+Mô hình hệ thống Quản lý Hoạt động Nghiên cứu Khoa học (NCKH) Sinh viên gồm các đối tượng chính là Sinh viên, Giảng viên hướng dẫn (GVHD) và Cán bộ Quản lý NCKH . Khi nhà trường mở đợt đăng ký, sinh viên có nhu cầu tham gia NCKH sẽ đăng nhập vào hệ thống để tìm hiểu thông tin về các đợt phát động, quy định, biểu mẫu và danh sách các hướng nghiên cứu. Sinh viên lập nhóm, điền thông tin đề tài gồm Phiếu thuyết minh và Phiếu đề xuất và chọn GVHD rồi gửi yêu cầu đăng ký lên hệ thống.
+
+GVHD tiếp nhận yêu cầu, xem xét đề tài và tiến hành xét duyệt (đồng ý hoặc từ chối hướng dẫn). Nếu được GVHD chấp thuận, hồ sơ sẽ được chuyển tiếp đến Cán bộ Quản lý NCKH  để thẩm định và trình Hội đồng xét duyệt cấp trường/khoa. Cán bộ quản lý kiểm tra tính hợp lệ, cập nhật trạng thái đề tài (Được duyệt hoặc Yêu cầu sửa đổi). Sau khi đề tài được giao, định kỳ sinh viên nộp báo cáo tiến độ hoàn thành cho hội đồng được thành lập bởi Cán bộ Quản lý NCKH. Đến hạn nghiệm thu, sinh viên nộp báo cáo tổng kết và sản phẩm nghiên cứu. Cán bộ Quản lý NCKH tổ chức hội đồng đánh giá,  nghiệm thu, xếp loại kết quả và tiến hành lập danh sách khen thưởng cho các đề tài đạt thành tích tốt.
+
+**2. Phân loại vai trò và các Use Case**
+
+| Vai trò | Actor: Sinh viên | Actor: Giảng viên hướng dẫn | Actor: Cán bộ Quản lý NCKH |
+| :---- | :---- | :---- | :---- |
+| **Các Use Case** | 1. Đăng nhập hệ thống.<br>2. Xem thông tin các đợt NCKH và biểu mẫu hướng dẫn.<br>3. Đăng ký đề tài NCKH.<br>4. Chỉnh sửa hồ sơ đăng ký theo góp ý.<br>5. Nộp báo cáo tiến độ định kỳ.<br>6. Nộp báo cáo tổng kết và sản phẩm nghiên cứu.<br>7. Tra cứu kết quả đánh giá, xếp loại đề tài. | 1. Đăng nhập hệ thống.<br>2. Xem và tiếp nhận hồ sơ đề tài.<br>3. Xét duyệt/Xác nhận hướng dẫn đề tài.<br>4. Theo dõi và ghi nhận xét tiến độ thực hiện đề tài.<br>5. Đánh giá sơ bộ sản phẩm và xác nhận cho phép sinh viên nghiệm thu. | 1. Đăng nhập hệ thống.<br>2. Đăng tải thông báo, quy định đợt NCKH mới.<br>3. Thẩm định và duyệt đề tài.<br>4. Quản lý tiến độ thực hiện các đề tài.<br>5. Tổ chức hội đồng nghiệm thu + Nhập kết quả đánh giá.<br>6. Tổng hợp điểm, xếp loại kết quả đề tài.<br>7. Xuất danh sách khen thưởng và in báo cáo thống kê. |
+
+**Trong đó hệ thống tập trung vào 15 Use Case cốt lõi:**
+
+### **Sinh viên**
+1. **Xem thông tin NCKH**  
+2. **Đăng ký đề tài**  
+3. **Sửa hồ sơ đề tài**  
+4. **Nộp báo cáo tiến độ**  
+5. **Báo cáo tổng kết**  
+6. **Xem kết quả**
+
+### **Giảng viên hướng dẫn**
+1. **Tiếp nhận hồ sơ**  
+2. **Duyệt hướng dẫn**  
+3. **Theo dõi tiến độ**  
+4. **Đánh giá sơ bộ**
+
+### **Cán bộ quản lý NCKH**
+1. **Quản lý đợt NCKH**  
+2. **Thẩm định đề tài**  
+3. **Quản lý tiến độ**  
+4. **Tổ chức nghiệm thu**  
+5. **Xếp loại và khen thưởng**
 
 ---
 
