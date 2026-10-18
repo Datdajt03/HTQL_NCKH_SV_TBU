@@ -63,32 +63,32 @@ graph TD
     User["Người dùng (Sinh viên / Giảng viên / Cán bộ QL)"]
     Router["Front Controller & Router (index.php)"]
     
-    subgraph AppCore ["Tầng ứng dụng (App Core)"]
+    subgraph AppCore ["Tầng ứng dụng MVC"]
         Controller["Controllers (Điều hướng & Xử lý nghiệp vụ)"]
         Model["Models (Thao tác CSDL & Ràng buộc toàn vẹn)"]
         View["Views (Giao diện người dùng & Modal tương tác)"]
     end
     
-    DB[(Cơ sở dữ liệu MySQL: ql_nckh_sv)]
+    DB[("Cơ sở dữ liệu MySQL: ql_nckh_sv")]
 
-    User -->|Yêu cầu HTTP / Form Action| Router
-    Router -->|Phân phối tác vụ| Controller
-    Controller -->|Xử lý dữ liệu| Model
-    Model -->|Truy vấn SQL (3NF)| DB
-    Model -->|Trả kết quả| Controller
-    Controller -->|Nạp dữ liệu hiển thị| View
-    View -->|Trả giao diện trực quan| User
+    User -->|"Gửi yêu cầu HTTP"| Router
+    Router -->|"Phân phối tác vụ"| Controller
+    Controller -->|"Xử lý nghiệp vụ"| Model
+    Model -->|"Truy vấn CSDL"| DB
+    Model -->|"Trả kết quả"| Controller
+    Controller -->|"Nạp dữ liệu"| View
+    View -->|"Render giao diện"| User
 ```
 
 ### 2. Sơ đồ chu trình hoạt động trực quan (6 giai đoạn khép kín)
 ```mermaid
 flowchart LR
-    A["1. Mở đợt NCKH<br><i>(Cán bộ QL phát động)</i>"] 
-    --> B["2. Đăng ký đề tài<br><i>(Sinh viên nộp TM & ĐX)</i>"]
-    --> C["3. Xét duyệt hồ sơ<br><i>(GVHD & Cán bộ QL duyệt)</i>"]
-    --> D["4. Báo cáo tiến độ<br><i>(SV nộp định kỳ, GVHD nhận xét)</i>"]
-    --> E["5. Nghiệm thu & Chấm điểm<br><i>(Hội đồng đánh giá)</i>"]
-    --> F["6. Xếp loại & Khen thưởng<br><i>(Công bố & Khen thưởng)</i>"]
+    A["1. Mở đợt NCKH<br>(Cán bộ QL phát động)"] 
+    --> B["2. Đăng ký đề tài<br>(Sinh viên nộp TM & ĐX)"]
+    --> C["3. Xét duyệt hồ sơ<br>(GVHD & Cán bộ QL duyệt)"]
+    --> D["4. Báo cáo tiến độ<br>(SV nộp định kỳ, GVHD nhận xét)"]
+    --> E["5. Nghiệm thu & Chấm điểm<br>(Hội đồng đánh giá)"]
+    --> F["6. Xếp loại & Khen thưởng<br>(Công bố & Khen thưởng)"]
 ```
 
 * **Sinh viên** chủ động xuyên suốt từ bước **2 → 4 → 5**.
