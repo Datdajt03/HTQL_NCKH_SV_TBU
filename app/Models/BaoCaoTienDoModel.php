@@ -22,17 +22,18 @@ class BaoCaoTienDoModel extends BaseModel {
     // UC 4: Nộp báo cáo tiến độ
     public function createReport(array $data): bool {
         $sql = "INSERT INTO BaoCaoTienDo (
-                    MaDeTai, DotBaoCao, PhanTramHoanThanh, CongViecDaLam, KhoKhanVuongMac, FileBaoCao
+                    MaDeTai, DotBaoCao, PhanTramHoanThanh, CongViecDaLam, ChiTietTienDo, KhoKhanVuongMac, FileBaoCao
                 ) VALUES (
-                    :madetai, :dotbaocao, :phantram, :congviec, :khokhan, :filebaocao
+                    :madetai, :dotbaocao, :phantram, :congviec, :chitiettiendo, :khokhan, :filebaocao
                 )";
         return $this->execute($sql, [
-            'madetai'     => $data['MaDeTai'],
-            'dotbaocao'   => $data['DotBaoCao'],
-            'phantram'    => (int)$data['PhanTramHoanThanh'],
-            'congviec'    => $data['CongViecDaLam'],
-            'khokhan'     => $data['KhoKhanVuongMac'] ?? null,
-            'filebaocao'  => $data['FileBaoCao']
+            'madetai'        => $data['MaDeTai'],
+            'dotbaocao'      => $data['DotBaoCao'],
+            'phantram'       => (int)$data['PhanTramHoanThanh'],
+            'congviec'       => $data['CongViecDaLam'],
+            'chitiettiendo'  => $data['ChiTietTienDo'] ?? null,
+            'khokhan'        => $data['KhoKhanVuongMac'] ?? null,
+            'filebaocao'     => $data['FileBaoCao'] ?? null
         ]);
     }
 
@@ -52,11 +53,27 @@ class BaoCaoTienDoModel extends BaseModel {
         );
     }
 
+    // UC 13: Cán bộ QL thẩm định / duyệt tiến độ
+    public function canBoReview(int $reportId, string $danhGia, ?string $nhanXet): bool {
+        return $this->execute(
+            "UPDATE BaoCaoTienDo SET
+                DanhGiaCanBo = :danhgia,
+                NhanXetCanBo = :nhanxet,
+                NgayCanBoDanhGia = CURRENT_TIMESTAMP
+             WHERE MaBaoCaoTD = :id",
+            [
+                'danhgia' => $danhGia,
+                'nhanxet' => $nhanXet,
+                'id'      => $reportId
+            ]
+        );
+    }
+
     // UC 13: Cán bộ QL quản lý tiến độ toàn trường
     public function getAllProgressOverview(?string $maDot = null): array {
         $sql = "SELECT dt.MaDeTai, dt.TenDeTai, dt.TrangThai, d.TenDot, nd_gv.HoTen AS TenGVHD,
                        (SELECT nd.HoTen FROM ThanhVienDeTai tv JOIN NguoiDung nd ON tv.MaSV = nd.MaNguoiDung WHERE tv.MaDeTai = dt.MaDeTai AND tv.VaiTro = 'TRUONG_NHOM' LIMIT 1) AS TenTruongNhom,
-                       bc.MaBaoCaoTD, bc.DotBaoCao, bc.PhanTramHoanThanh, bc.DanhGiaTienDo, bc.NgayNop, bc.FileBaoCao
+                       bc.MaBaoCaoTD, bc.DotBaoCao, bc.PhanTramHoanThanh, bc.DanhGiaTienDo, bc.NhanXetGVHD, bc.DanhGiaCanBo, bc.NhanXetCanBo, bc.NgayNop, bc.FileBaoCao, bc.ChiTietTienDo
                 FROM DeTai dt
                 JOIN DotNCKH d ON dt.MaDot = d.MaDot
                 JOIN NguoiDung nd_gv ON dt.MaGVHD = nd_gv.MaNguoiDung

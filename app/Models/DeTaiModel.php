@@ -107,31 +107,33 @@ class DeTaiModel extends BaseModel {
     }
 
     // UC 2: Đăng ký đề tài (Transaction: tạo đề tài + các thành viên)
-    public function registerTopic(array $topicData, array $members): string {
+    public function registerTopic(array $topicData, array $members, ?array $deXuatData = null, ?array $thuyetMinhData = null): string {
         $this->db->beginTransaction();
         try {
             $maDeTai = $this->generateMaDeTai();
             $sql = "INSERT INTO DeTai (
                         MaDeTai, TenDeTai, MaDot, MaHuongNC, MaGVHD,
                         MucTieu, NoiDungNC, SanPhamDuKien, KinhPhiDuKien,
-                        FilePhieuThuyetMinh, FilePhieuDeXuat, TrangThai
+                        FilePhieuThuyetMinh, FilePhieuDeXuat, DuLieuDeXuat, DuLieuThuyetMinh, TrangThai
                     ) VALUES (
                         :madetai, :tendetai, :madot, :mahuong, :magvhd,
                         :muctieu, :noidung, :sanpham, :kinhphi,
-                        :filetm, :filedx, 'CHO_GVHD_DUYET'
+                        :filetm, :filedx, :dulieudx, :dulieutm, 'CHO_GVHD_DUYET'
                     )";
             $this->execute($sql, [
-                'madetai'  => $maDeTai,
-                'tendetai' => $topicData['TenDeTai'],
-                'madot'    => $topicData['MaDot'],
-                'mahuong'  => $topicData['MaHuongNC'],
-                'magvhd'   => $topicData['MaGVHD'],
-                'muctieu'  => $topicData['MucTieu'],
-                'noidung'  => $topicData['NoiDungNC'],
-                'sanpham'  => $topicData['SanPhamDuKien'],
-                'kinhphi'  => $topicData['KinhPhiDuKien'] ?? 0,
-                'filetm'   => $topicData['FilePhieuThuyetMinh'],
-                'filedx'   => $topicData['FilePhieuDeXuat']
+                'madetai'   => $maDeTai,
+                'tendetai'  => $topicData['TenDeTai'],
+                'madot'     => $topicData['MaDot'],
+                'mahuong'   => $topicData['MaHuongNC'],
+                'magvhd'    => $topicData['MaGVHD'],
+                'muctieu'   => $topicData['MucTieu'],
+                'noidung'   => $topicData['NoiDungNC'],
+                'sanpham'   => $topicData['SanPhamDuKien'],
+                'kinhphi'   => $topicData['KinhPhiDuKien'] ?? 0,
+                'filetm'    => !empty($topicData['FilePhieuThuyetMinh']) ? $topicData['FilePhieuThuyetMinh'] : null,
+                'filedx'    => !empty($topicData['FilePhieuDeXuat']) ? $topicData['FilePhieuDeXuat'] : null,
+                'dulieudx'  => $deXuatData ? json_encode($deXuatData, JSON_UNESCAPED_UNICODE) : null,
+                'dulieutm'  => $thuyetMinhData ? json_encode($thuyetMinhData, JSON_UNESCAPED_UNICODE) : null
             ]);
 
             // Thêm các thành viên nhóm
@@ -155,7 +157,7 @@ class DeTaiModel extends BaseModel {
     }
 
     // UC 3: Sửa hồ sơ đề tài theo góp ý
-    public function updateTopicProposal(string $maDeTai, array $data, string $maSV, string $noiDungSua): bool {
+    public function updateTopicProposal(string $maDeTai, array $data, string $maSV, string $noiDungSua, ?array $deXuatData = null, ?array $thuyetMinhData = null): bool {
         $this->db->beginTransaction();
         try {
             // Đếm số lần sửa hiện tại
@@ -173,6 +175,8 @@ class DeTaiModel extends BaseModel {
                         NoiDungNC = :noidung,
                         SanPhamDuKien = :sanpham,
                         KinhPhiDuKien = :kinhphi,
+                        DuLieuDeXuat = :dulieudx,
+                        DuLieuThuyetMinh = :dulieutm,
                         TrangThai = 'CHO_THAM_DINH'";
             $params = [
                 'tendetai' => $data['TenDeTai'],
@@ -181,6 +185,8 @@ class DeTaiModel extends BaseModel {
                 'noidung'  => $data['NoiDungNC'],
                 'sanpham'  => $data['SanPhamDuKien'],
                 'kinhphi'  => $data['KinhPhiDuKien'] ?? 0,
+                'dulieudx' => $deXuatData ? json_encode($deXuatData, JSON_UNESCAPED_UNICODE) : null,
+                'dulieutm' => $thuyetMinhData ? json_encode($thuyetMinhData, JSON_UNESCAPED_UNICODE) : null,
                 'id'       => $maDeTai
             ];
 
@@ -196,14 +202,16 @@ class DeTaiModel extends BaseModel {
             $this->execute($sql, $params);
 
             // Ghi vào bảng LichSuChinhSua
-            $historySql = "INSERT INTO LichSuChinhSua (MaDeTai, LanChinhSua, NoiDungSua, FileThuyetMinhMoi, FileDeXuatMoi, NguoiSua)
-                           VALUES (:madetai, :lan, :noidung, :filetm, :filedx, :nguoisua)";
+            $historySql = "INSERT INTO LichSuChinhSua (MaDeTai, LanChinhSua, NoiDungSua, FileThuyetMinhMoi, FileDeXuatMoi, DuLieuDeXuatMoi, DuLieuThuyetMinhMoi, NguoiSua)
+                           VALUES (:madetai, :lan, :noidung, :filetm, :filedx, :dxmoi, :tmmoi, :nguoisua)";
             $this->execute($historySql, [
                 'madetai'  => $maDeTai,
                 'lan'      => $lanSua,
                 'noidung'  => $noiDungSua,
                 'filetm'   => $data['FilePhieuThuyetMinh'] ?? null,
                 'filedx'   => $data['FilePhieuDeXuat'] ?? null,
+                'dxmoi'    => $deXuatData ? json_encode($deXuatData, JSON_UNESCAPED_UNICODE) : null,
+                'tmmoi'    => $thuyetMinhData ? json_encode($thuyetMinhData, JSON_UNESCAPED_UNICODE) : null,
                 'nguoisua' => $maSV
             ]);
 
@@ -256,5 +264,47 @@ class DeTaiModel extends BaseModel {
             "UPDATE DeTai SET TrangThai = :status WHERE MaDeTai = :id",
             ['status' => $status, 'id' => $maDeTai]
         );
+    }
+
+    public function deleteTopic(string $maDeTai): bool {
+        $this->db->beginTransaction();
+        try {
+            // Xóa liên kết phân công hội đồng nếu có (sẽ cascade sang PhieuDanhGia)
+            $this->execute("DELETE FROM PhanCongHoiDong WHERE MaDeTai = :id", ['id' => $maDeTai]);
+            // Xóa đề tài (cascade sang ThanhVienDeTai, LichSuChinhSua, BaoCaoTienDo, BaoCaoTongKet, KetQuaKhenThuong)
+            $res = $this->execute("DELETE FROM DeTai WHERE MaDeTai = :id", ['id' => $maDeTai]);
+            $this->db->commit();
+            return $res;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    public function updateTopicBasic(string $maDeTai, array $data): bool {
+        $sql = "UPDATE DeTai SET 
+                TenDeTai = :tendetai, 
+                MaHuongNC = :mahuong, 
+                KinhPhiDuKien = :kinhphi,
+                MucTieu = :muctieu,
+                SanPhamDuKien = :sanpham
+                WHERE MaDeTai = :id";
+        return $this->execute($sql, [
+            'tendetai' => $data['TenDeTai'],
+            'mahuong'  => $data['MaHuongNC'],
+            'kinhphi'  => $data['KinhPhiDuKien'] ?? 0,
+            'muctieu'  => $data['MucTieu'] ?? '',
+            'sanpham'  => $data['SanPhamDuKien'] ?? '',
+            'id'       => $maDeTai
+        ]);
+    }
+
+    public function getFinancialOverview(): array {
+        $row = $this->fetchOne("SELECT SUM(KinhPhiDuKien) AS TongKinhPhi, AVG(KinhPhiDuKien) AS KinhPhiTrungBinh, MAX(KinhPhiDuKien) AS KinhPhiCaoNhat FROM DeTai");
+        return [
+            'TongKinhPhi'      => (float)($row['TongKinhPhi'] ?? 0),
+            'KinhPhiTrungBinh' => (float)($row['KinhPhiTrungBinh'] ?? 0),
+            'KinhPhiCaoNhat'   => (float)($row['KinhPhiCaoNhat'] ?? 0),
+        ];
     }
 }

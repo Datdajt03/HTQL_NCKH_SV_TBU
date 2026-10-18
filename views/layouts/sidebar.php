@@ -7,15 +7,15 @@ $role = AuthHelper::role();
 $action = $_GET['action'] ?? '';
 ?>
 <aside class="app-sidebar">
-    <div class="sidebar-header">
+    <a href="<?= App::url('index.php?action=gioi-thieu') ?>" class="sidebar-header" title="Cổng Thông tin Trường Đại học Tây Bắc (Sơn La)">
         <div class="brand-logo">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h6"/></svg>
+            <img src="<?= App::url('pic/logo.jpg') ?>" alt="Logo ĐH Tây Bắc" class="brand-logo-img" onerror="this.onerror=null; this.src='<?= App::url('public/images/logo.jpg') ?>';">
         </div>
         <div class="brand-text">
-            <h1>NCKH SINH VIÊN</h1>
-            <span>HỆ THỐNG QUẢN LÝ</span>
+            <h1>ĐẠI HỌC TÂY BẮC</h1>
+            <span>NCKH SINH VIÊN - UTB SƠN LA</span>
         </div>
-    </div>
+    </a>
 
     <nav class="sidebar-nav">
         <?php if ($role === App::ROLE_SINH_VIEN): ?>
@@ -111,7 +111,19 @@ $action = $_GET['action'] ?? '';
                 <span class="nav-icon"><?= ViewHelper::icon('bar-chart') ?></span>
                 <span>Thống kê & Xuất báo cáo</span>
             </a>
+
+            <a href="<?= App::url('index.php?action=cb-quanly-nguoidung') ?>" class="nav-item <?= $action === 'cb-quanly-nguoidung' ? 'active' : '' ?>">
+                <span class="nav-icon"><?= ViewHelper::icon('users') ?></span>
+                <span>Quản lý tài khoản người dùng</span>
+            </a>
         <?php endif; ?>
+
+        <div class="nav-section-title">CỔNG THÔNG TIN TRƯỜNG</div>
+        <a href="<?= App::url('index.php?action=gioi-thieu#cua-so-web') ?>" class="nav-item <?= in_array($action, ['gioi-thieu', 'utb-web', 'intro', 'about']) ? 'active' : '' ?>">
+            <span class="nav-icon"><?= ViewHelper::icon('globe') ?></span>
+            <span>Cửa sổ UTB (utb.edu.vn)</span>
+            <span class="badge" style="margin-left: auto; font-size: 10px; background: rgba(37,99,235,0.25); color: #60a5fa; font-weight: 700; padding: 2px 6px; border-radius: 4px;">SƠN LA</span>
+        </a>
 
         <div class="nav-section-title">HỆ THỐNG</div>
         <a href="<?= App::url('index.php?action=profile') ?>" class="nav-item <?= $action === 'profile' ? 'active' : '' ?>">

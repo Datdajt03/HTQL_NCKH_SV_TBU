@@ -1,5 +1,5 @@
 <?php
-// Tự động sinh bởi setup.php
+// Tu dong sinh boi setup_database.bat
 return [
     'db' => [
         'host' => '127.0.0.1',

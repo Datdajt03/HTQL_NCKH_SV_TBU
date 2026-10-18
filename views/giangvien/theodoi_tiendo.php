@@ -10,7 +10,7 @@ require dirname(__DIR__) . '/layouts/header.php';
         9. Theo Dõi & Ghi Nhận Xét Tiến Độ Thực Hiện Đề Tài
     </h2>
     <p style="color: var(--text-secondary); font-size: 14px; margin: 0;">
-        Giám sát khối lượng công việc, đánh giá tiến độ định kỳ và đưa ra định hướng hỗ trợ nhóm nghiên cứu kịp thời.
+        Giám sát khối lượng công việc theo Mục 12 Thuyết minh, thẩm định sản phẩm nộp của sinh viên và ghi nhận xét chỉ đạo.
     </p>
 </div>
 
@@ -38,19 +38,29 @@ require dirname(__DIR__) . '/layouts/header.php';
                     Nhóm sinh viên chưa nộp đợt báo cáo tiến độ nào.
                 </div>
             <?php else: ?>
-                <div style="display: flex; flex-direction: column; gap: 16px;">
-                    <?php foreach ($reports as $r): ?>
+                <div style="display: flex; flex-direction: column; gap: 18px;">
+                    <?php foreach ($reports as $r): 
+                        $chiTietTasks = [];
+                        if (!empty($r['ChiTietTienDo'])) {
+                            $decoded = json_decode($r['ChiTietTienDo'], true);
+                            if (is_array($decoded)) {
+                                $chiTietTasks = $decoded;
+                            }
+                        }
+                    ?>
                         <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <strong style="color: #fff; font-size: 15px;"><?= ViewHelper::e($r['DotBaoCao']) ?></strong>
                                     <span style="font-size: 13px; color: var(--text-muted);">(Nộp ngày: <?= ViewHelper::datetime($r['NgayNop']) ?>)</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-weight: 800; color: #38bdf8; font-size: 16px;"><?= $r['PhanTramHoanThanh'] ?>%</span>
-                                    <a href="<?= App::url('public/' . $r['FileBaoCao']) ?>" target="_blank" class="btn btn-sm btn-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
-                                        <?= ViewHelper::icon('file-text', '', 14) ?> Tải file báo cáo
-                                    </a>
+                                    <span style="font-weight: 800; color: #38bdf8; font-size: 18px;"><?= $r['PhanTramHoanThanh'] ?>%</span>
+                                    <?php if (!empty($r['FileBaoCao'])): ?>
+                                        <a href="<?= App::url('public/' . $r['FileBaoCao']) ?>" target="_blank" class="btn btn-sm btn-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
+                                            <?= ViewHelper::icon('file-text', '', 14) ?> Tải file báo cáo
+                                        </a>
+                                    <?php endif; ?>
                                 </div>
                             </div>
 
@@ -58,15 +68,78 @@ require dirname(__DIR__) . '/layouts/header.php';
                                 <div class="progress-fill" style="width: <?= $r['PhanTramHoanThanh'] ?>%;"></div>
                             </div>
 
-                            <div style="margin-bottom: 12px; font-size: 14px; color: #e2e8f0;">
-                                <strong style="color: #60a5fa; font-size: 13px; display: block; margin-bottom: 4px;">Công việc nhóm đã làm:</strong>
-                                <?= nl2br(ViewHelper::e($r['CongViecDaLam'])) ?>
-                            </div>
+                            <!-- CHI TIẾT TỪNG NỘI DUNG MỤC 12 -->
+                            <?php if (!empty($chiTietTasks)): ?>
+                                <div style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 6px; padding: 14px; margin-bottom: 14px;">
+                                    <h4 style="font-size: 12.5px; font-weight: 800; color: #38bdf8; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        <?= ViewHelper::icon('check-circle', '', 14) ?> Đánh giá tiến độ từng nội dung Mục 12 (Thuyết minh):
+                                    </h4>
+                                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                                        <?php foreach ($chiTietTasks as $ct): 
+                                            $bColor = match($ct['muc_do'] ?? '') {
+                                                'HOAN_THANH' => '#10b981',
+                                                'SAP_HOAN_THANH' => '#38bdf8',
+                                                'HOAN_THANH_MOT_NUA' => '#f59e0b',
+                                                default => '#ef4444'
+                                            };
+                                            $bLabel = match($ct['muc_do'] ?? '') {
+                                                'HOAN_THANH' => 'Hoàn thành (100%)',
+                                                'SAP_HOAN_THANH' => 'Sắp hoàn thành (75%)',
+                                                'HOAN_THANH_MOT_NUA' => 'Hoàn thành 1/2 (50%)',
+                                                default => 'Chưa hoàn thành (0%)'
+                                            };
+                                        ?>
+                                            <div style="background: rgba(15, 23, 42, 0.5); border-left: 3px solid <?= $bColor ?>; border-radius: 4px; padding: 8px 12px; font-size: 12.5px;">
+                                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                                                    <div>
+                                                        <strong style="color: #fff;">Mục <?= $ct['tt'] ?? '' ?>: <?= ViewHelper::e($ct['noi_dung'] ?? '') ?></strong>
+                                                        <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">
+                                                            SP kế hoạch: <span style="color: #cbd5e1;"><?= ViewHelper::e($ct['san_pham_ke_hoach'] ?? '-') ?></span> | 
+                                                            Thời gian: <span style="color: #cbd5e1;"><?= ViewHelper::e($ct['thoi_gian'] ?? '-') ?></span>
+                                                        </div>
+                                                    </div>
+                                                    <span style="font-weight: 700; color: <?= $bColor ?>; font-size: 11.5px; white-space: nowrap;">
+                                                        <?= $bLabel ?>
+                                                    </span>
+                                                </div>
+                                                <?php if (!empty($ct['san_pham_nop'])): ?>
+                                                    <div style="font-size: 12px; color: #38bdf8; margin-top: 4px; word-break: break-all;">
+                                                        📦 <strong>Sản phẩm / Minh chứng:</strong> <?= ViewHelper::e($ct['san_pham_nop']) ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                                <?php if (!empty($ct['ghi_chu'])): ?>
+                                                    <div style="font-size: 11px; color: #94a3b8; margin-top: 2px; font-style: italic;">
+                                                        📝 Ghi chú: <?= ViewHelper::e($ct['ghi_chu']) ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <div style="margin-bottom: 12px; font-size: 14px; color: #e2e8f0;">
+                                    <strong style="color: #60a5fa; font-size: 13px; display: block; margin-bottom: 4px;">Công việc nhóm đã làm:</strong>
+                                    <?= nl2br(ViewHelper::e($r['CongViecDaLam'])) ?>
+                                </div>
+                            <?php endif; ?>
 
                             <?php if (!empty($r['KhoKhanVuongMac'])): ?>
                                 <div style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; padding: 10px 14px; border-radius: 4px; font-size: 13px; color: #fde68a; margin-bottom: 14px;">
                                     <strong>Khó khăn, vướng mắc của sinh viên:</strong><br>
                                     <?= nl2br(ViewHelper::e($r['KhoKhanVuongMac'])) ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <!-- Ý KIẾN THẨM ĐỊNH CỦA CÁN BỘ QUẢN LÝ (NẾU CÓ) -->
+                            <?php if (!empty($r['DanhGiaCanBo'])): ?>
+                                <div style="background: rgba(14, 165, 233, 0.08); border-left: 3px solid #0ea5e9; padding: 10px 14px; border-radius: 4px; font-size: 12.5px; margin-bottom: 14px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                        <strong style="color: #38bdf8;">Ý kiến thẩm định của Cán bộ Quản lý NCKH:</strong>
+                                        <?= ViewHelper::statusBadge($r['DanhGiaCanBo']) ?>
+                                    </div>
+                                    <?php if (!empty($r['NhanXetCanBo'])): ?>
+                                        <div style="color: #cbd5e1;"><?= nl2br(ViewHelper::e($r['NhanXetCanBo'])) ?></div>
+                                    <?php endif; ?>
                                 </div>
                             <?php endif; ?>
 

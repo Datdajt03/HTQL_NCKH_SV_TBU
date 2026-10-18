@@ -35,13 +35,27 @@ use App\Controllers\SinhVienController;
 use App\Controllers\GiangVienController;
 use App\Controllers\CanBoQLController;
 use App\Controllers\ExportController;
+use App\Controllers\PortalController;
 
 AuthHelper::startSession();
 
 $action = $_GET['action'] ?? '';
 
-// Nếu chưa có action, chuyển hướng theo trạng thái đăng nhập
+// Xử lý action mặc định và action=dashboard
 if ($action === '') {
+    // Khách vãng lai truy cập giao diện chính: hiển thị Cổng Giới thiệu & Cửa Sổ Trực Tuyến Trường ĐH Tây Bắc (Sơn La)
+    if (!AuthHelper::isLoggedIn()) {
+        $action = 'gioi-thieu';
+    } else {
+        $role = AuthHelper::role();
+        $action = match ($role) {
+            App::ROLE_SINH_VIEN  => 'sv-dashboard',
+            App::ROLE_GIANG_VIEN => 'gv-dashboard',
+            App::ROLE_CAN_BO_QL, App::ROLE_ADMIN => 'cb-dashboard',
+            default => 'gioi-thieu'
+        };
+    }
+} elseif ($action === 'dashboard') {
     if (!AuthHelper::isLoggedIn()) {
         $action = 'login';
     } else {
@@ -57,18 +71,47 @@ if ($action === '') {
 
 try {
     switch ($action) {
-        // --- XÁC THỰC & TÀI KHOẢN ---
+        case 'gioi-thieu':
+        case 'intro':
+        case 'about':
+        case 'portal':
+        case 'home':
+        case 'trang-chu':
+        case 'utb-web':
+        case 'web-viewer':
+        case 'dai-hoc-tay-bac':
+            (new PortalController())->gioiThieu();
+            break;
         case 'login':
             (new AuthController())->login();
             break;
+        case 'register':
+            (new AuthController())->register();
+            break;
         case 'quick-login':
             (new AuthController())->quickLogin();
+            break;
+        case 'admin-switch-role':
+            (new AuthController())->adminSwitchRole();
             break;
         case 'logout':
             (new AuthController())->logout();
             break;
         case 'profile':
             (new AuthController())->profile();
+            break;
+        case 'dashboard':
+            if (!AuthHelper::isLoggedIn()) {
+                (new AuthController())->login();
+            } else {
+                $role = AuthHelper::role();
+                match ($role) {
+                    App::ROLE_SINH_VIEN  => (new SinhVienController())->dashboard(),
+                    App::ROLE_GIANG_VIEN => (new GiangVienController())->dashboard(),
+                    App::ROLE_CAN_BO_QL, App::ROLE_ADMIN => (new CanBoQLController())->dashboard(),
+                    default => (new AuthController())->login()
+                };
+            }
             break;
 
         // --- PHÂN HỆ SINH VIÊN (6 Use Cases) ---
@@ -96,6 +139,9 @@ try {
         case 'sv-chitiet-detai':
             (new SinhVienController())->chiTietDeTai();
             break;
+        case 'sv-xoa-detai':
+            (new SinhVienController())->xoaDeTai();
+            break;
 
         // --- PHÂN HỆ GIẢNG VIÊN HƯỚNG DẪN (4 Use Cases) ---
         case 'gv-dashboard':
@@ -114,9 +160,12 @@ try {
             (new GiangVienController())->chiTietDeTai();
             break;
 
-        // --- PHÂN HỆ CÁN BỘ QUẢN LÝ NCKH (5 Use Cases) ---
+        // --- PHÂN HỆ CÁN BỘ QUẢN LÝ NCKH (5 Use Cases + Quản lý người dùng) ---
         case 'cb-dashboard':
             (new CanBoQLController())->dashboard();
+            break;
+        case 'cb-quanly-nguoidung':
+            (new CanBoQLController())->quanLyNguoiDung();
             break;
         case 'cb-quanly-dot':
             (new CanBoQLController())->quanLyDot();
@@ -124,8 +173,14 @@ try {
         case 'cb-thamdinh-detai':
             (new CanBoQLController())->thamDinhDeTai();
             break;
+        case 'cb-xoa-detai':
+            (new CanBoQLController())->xoaDeTai();
+            break;
         case 'cb-quanly-tiendo':
             (new CanBoQLController())->quanLyTienDo();
+            break;
+        case 'cb-duyet-tiendo':
+            (new CanBoQLController())->duyetTienDo();
             break;
         case 'cb-tochuc-nghiemthu':
             (new CanBoQLController())->toChucNghiemThu();

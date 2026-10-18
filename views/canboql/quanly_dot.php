@@ -49,6 +49,7 @@ require dirname(__DIR__) . '/layouts/header.php';
                         <th>Hạn Nghiệm Thu</th>
                         <th>Số Đề Tài</th>
                         <th>Trạng Thái</th>
+                        <th>Thao Tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,6 +65,20 @@ require dirname(__DIR__) . '/layouts/header.php';
                             <td><?= ViewHelper::date($d['HanNopNghiemThu']) ?></td>
                             <td><span class="badge badge-secondary"><?= $d['TongSoDeTai'] ?> đề tài</span></td>
                             <td><?= ViewHelper::statusBadge($d['TrangThai']) ?></td>
+                            <td>
+                                <div style="display: flex; gap: 6px;">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick='editDot(<?= json_encode($d, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)' title="Chỉnh sửa đợt NCKH">
+                                        <?= ViewHelper::icon('edit') ?> Sửa
+                                    </button>
+                                    <form method="POST" action="<?= App::url('index.php?action=cb-quanly-dot') ?>" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đợt NCKH <?= ViewHelper::e($d['MaDot']) ?>?');">
+                                        <input type="hidden" name="sub_action" value="delete_dot">
+                                        <input type="hidden" name="madot" value="<?= ViewHelper::e($d['MaDot']) ?>">
+                                        <button type="submit" class="btn btn-sm btn-danger" <?= ((int)($d['TongSoDeTai'] ?? 0) > 0) ? 'title="Đợt đã có đề tài không thể xóa trực tiếp"' : 'title="Xóa đợt"' ?>>
+                                            <?= ViewHelper::icon('trash') ?>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -92,6 +107,7 @@ require dirname(__DIR__) . '/layouts/header.php';
                             <th>Mã HNC</th>
                             <th>Tên Hướng Nghiên Cứu</th>
                             <th>Số Đề Tài</th>
+                            <th>Thao Tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -103,6 +119,20 @@ require dirname(__DIR__) . '/layouts/header.php';
                                     <div style="font-size: 12px; color: var(--text-muted);"><?= ViewHelper::e($h['MoTa']) ?></div>
                                 </td>
                                 <td><span class="badge badge-secondary"><?= $h['SoDeTai'] ?></span></td>
+                                <td>
+                                    <div style="display: flex; gap: 6px;">
+                                        <button type="button" class="btn btn-sm btn-secondary" onclick='editDirection(<?= json_encode($h, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)' title="Chỉnh sửa hướng NC">
+                                            <?= ViewHelper::icon('edit') ?>
+                                        </button>
+                                        <form method="POST" action="<?= App::url('index.php?action=cb-quanly-dot') ?>" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa hướng nghiên cứu <?= ViewHelper::e($h['MaHuongNC']) ?>?');">
+                                            <input type="hidden" name="sub_action" value="delete_direction">
+                                            <input type="hidden" name="mahuongnc" value="<?= ViewHelper::e($h['MaHuongNC']) ?>">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Xóa hướng NC">
+                                                <?= ViewHelper::icon('trash') ?>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -131,6 +161,7 @@ require dirname(__DIR__) . '/layouts/header.php';
                             <th>Loại</th>
                             <th>File</th>
                             <th>Ngày Đăng</th>
+                            <th>Thao Tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -155,6 +186,20 @@ require dirname(__DIR__) . '/layouts/header.php';
                                     <?php endif; ?>
                                 </td>
                                 <td style="font-size: 12px;"><?= ViewHelper::date($tb['NgayDang']) ?></td>
+                                <td>
+                                    <div style="display: flex; gap: 6px;">
+                                        <button type="button" class="btn btn-sm btn-secondary" onclick='editNotice(<?= json_encode($tb, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)' title="Chỉnh sửa thông báo">
+                                            <?= ViewHelper::icon('edit') ?>
+                                        </button>
+                                        <form method="POST" action="<?= App::url('index.php?action=cb-quanly-dot') ?>" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này?');">
+                                            <input type="hidden" name="sub_action" value="delete_notice">
+                                            <input type="hidden" name="id" value="<?= (int)($tb['MaThongBao'] ?? $tb['ID'] ?? 0) ?>">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Xóa bài viết">
+                                                <?= ViewHelper::icon('trash') ?>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -320,4 +365,199 @@ require dirname(__DIR__) . '/layouts/header.php';
         </form>
     </div>
 </div>
+
+<!-- MODAL: CHỈNH SỬA ĐỢT NCKH -->
+<div id="modal-edit-dot" class="modal-backdrop">
+    <div class="modal-container">
+        <div class="modal-header">
+            <div class="modal-title">Cập Nhật Đợt NCKH</div>
+            <button type="button" class="modal-close" onclick="closeModal('modal-edit-dot')">&times;</button>
+        </div>
+        <form method="POST" action="<?= App::url('index.php?action=cb-quanly-dot') ?>">
+            <input type="hidden" name="sub_action" value="update_dot">
+            <input type="hidden" name="madot" id="edit-dot-madot">
+            <div class="modal-body">
+                <div class="grid-cols-2">
+                    <div class="form-group">
+                        <label class="form-label">Mã Đợt NCKH</label>
+                        <input type="text" id="edit-dot-display-madot" class="form-control" disabled style="opacity: 0.7;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Năm Học <span class="required">*</span></label>
+                        <input type="text" name="namhoc" id="edit-dot-namhoc" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tên Đợt Phát Động NCKH <span class="required">*</span></label>
+                    <input type="text" name="tendot" id="edit-dot-tendot" class="form-control" required>
+                </div>
+
+                <div class="grid-cols-2">
+                    <div class="form-group">
+                        <label class="form-label">Ngày Bắt Đầu Mở Đợt <span class="required">*</span></label>
+                        <input type="date" name="ngaybatdau" id="edit-dot-ngaybatdau" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hạn Chót Đăng Ký Đề Tài <span class="required">*</span></label>
+                        <input type="date" name="handangky" id="edit-dot-handangky" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="grid-cols-2">
+                    <div class="form-group">
+                        <label class="form-label">Hạn Nộp Báo Cáo Tiến Độ <span class="required">*</span></label>
+                        <input type="date" name="hannopbaocaotd" id="edit-dot-hannopbaocaotd" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hạn Nộp Báo Cáo Nghiệm Thu <span class="required">*</span></label>
+                        <input type="date" name="hannopnghiemthu" id="edit-dot-hannopnghiemthu" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="grid-cols-2">
+                    <div class="form-group">
+                        <label class="form-label">Ngày Kết Thúc Toàn Đợt <span class="required">*</span></label>
+                        <input type="date" name="ngayketthuc" id="edit-dot-ngayketthuc" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Trạng Thái Đợt</label>
+                        <select name="trangthai" id="edit-dot-trangthai" class="form-control">
+                            <option value="MO_DANG_KY">Đang mở đăng ký</option>
+                            <option value="DANG_THUC_HIEN">Đang thực hiện</option>
+                            <option value="NGHIEM_THU">Nghiệm thu</option>
+                            <option value="KET_THUC">Đã kết thúc</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edit-dot')">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL: CHỈNH SỬA HƯỚNG NGHIÊN CỨU -->
+<div id="modal-edit-direction" class="modal-backdrop">
+    <div class="modal-container">
+        <div class="modal-header">
+            <div class="modal-title">Cập Nhật Hướng Nghiên Cứu</div>
+            <button type="button" class="modal-close" onclick="closeModal('modal-edit-direction')">&times;</button>
+        </div>
+        <form method="POST" action="<?= App::url('index.php?action=cb-quanly-dot') ?>">
+            <input type="hidden" name="sub_action" value="update_direction">
+            <input type="hidden" name="mahuongnc" id="edit-dir-mahuongnc">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Mã Hướng Nghiên Cứu</label>
+                    <input type="text" id="edit-dir-display-mahuongnc" class="form-control" disabled style="opacity: 0.7;">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tên Hướng Nghiên Cứu <span class="required">*</span></label>
+                    <input type="text" name="tenhuongnc" id="edit-dir-tenhuongnc" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mô Tả Lĩnh Vực / Định Hướng Nghiên Cứu</label>
+                    <textarea name="mota" id="edit-dir-mota" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edit-direction')">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu Hướng NC</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL: CHỈNH SỬA THÔNG BÁO / BIỂU MẪU -->
+<div id="modal-edit-notice" class="modal-backdrop">
+    <div class="modal-container">
+        <div class="modal-header">
+            <div class="modal-title">Cập Nhật Thông Báo / Biểu Mẫu</div>
+            <button type="button" class="modal-close" onclick="closeModal('modal-edit-notice')">&times;</button>
+        </div>
+        <form method="POST" action="<?= App::url('index.php?action=cb-quanly-dot') ?>" enctype="multipart/form-data">
+            <input type="hidden" name="sub_action" value="update_notice">
+            <input type="hidden" name="id" id="edit-notice-id">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Tiêu Đề Bài Đăng <span class="required">*</span></label>
+                    <input type="text" name="tieude" id="edit-notice-tieude" class="form-control" required>
+                </div>
+
+                <div class="grid-cols-2">
+                    <div class="form-group">
+                        <label class="form-label">Phân Loại <span class="required">*</span></label>
+                        <select name="loai" id="edit-notice-loai" class="form-control" required>
+                            <option value="THONG_BAO">Thông báo chung</option>
+                            <option value="BIEU_MAU">Biểu mẫu hướng dẫn</option>
+                            <option value="QUY_DINH">Quy chế / Quy định</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Thuộc Đợt NCKH</label>
+                        <select name="madot" id="edit-notice-madot" class="form-control">
+                            <option value="">-- Áp dụng cho tất cả các đợt --</option>
+                            <?php foreach ($dots as $d): ?>
+                                <option value="<?= ViewHelper::e($d['MaDot']) ?>"><?= ViewHelper::e($d['TenDot']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nội Dung Chi Tiết</label>
+                    <textarea name="noidung" id="edit-notice-noidung" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Thay Đổi File Đính Kèm (nếu có)</label>
+                    <input type="file" name="file_dinhkem" class="form-control">
+                    <small style="font-size: 11px; color: var(--text-muted);">Bỏ trống nếu muốn giữ nguyên tệp tin đính kèm hiện tại.</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edit-notice')">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu Bài Đăng</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function editDot(dot) {
+    document.getElementById('edit-dot-madot').value = dot.MaDot || '';
+    document.getElementById('edit-dot-display-madot').value = dot.MaDot || '';
+    document.getElementById('edit-dot-namhoc').value = dot.NamHoc || '';
+    document.getElementById('edit-dot-tendot').value = dot.TenDot || '';
+    document.getElementById('edit-dot-ngaybatdau').value = (dot.NgayBatDau || '').substring(0, 10);
+    document.getElementById('edit-dot-handangky').value = (dot.HanDangKy || '').substring(0, 10);
+    document.getElementById('edit-dot-hannopbaocaotd').value = (dot.HanNopBaoCaoTD || '').substring(0, 10);
+    document.getElementById('edit-dot-hannopnghiemthu').value = (dot.HanNopNghiemThu || '').substring(0, 10);
+    document.getElementById('edit-dot-ngayketthuc').value = (dot.NgayKetThuc || '').substring(0, 10);
+    document.getElementById('edit-dot-trangthai').value = dot.TrangThai || 'MO_DANG_KY';
+    openModal('modal-edit-dot');
+}
+
+function editDirection(dir) {
+    document.getElementById('edit-dir-mahuongnc').value = dir.MaHuongNC || '';
+    document.getElementById('edit-dir-display-mahuongnc').value = dir.MaHuongNC || '';
+    document.getElementById('edit-dir-tenhuongnc').value = dir.TenHuongNC || '';
+    document.getElementById('edit-dir-mota').value = dir.MoTa || '';
+    openModal('modal-edit-direction');
+}
+
+function editNotice(notice) {
+    document.getElementById('edit-notice-id').value = notice.MaThongBao || notice.ID || '';
+    document.getElementById('edit-notice-tieude').value = notice.TieuDe || '';
+    document.getElementById('edit-notice-loai').value = notice.Loai || 'THONG_BAO';
+    document.getElementById('edit-notice-madot').value = notice.MaDot || '';
+    document.getElementById('edit-notice-noidung').value = notice.NoiDung || '';
+    openModal('modal-edit-notice');
+}
+</script>
+
 <?php require dirname(__DIR__) . '/layouts/footer.php'; ?>

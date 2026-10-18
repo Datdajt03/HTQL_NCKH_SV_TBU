@@ -58,6 +58,15 @@ class DotNCKHModel extends BaseModel {
         ]);
     }
 
+    public function delete(string $maDot): bool {
+        $count = $this->fetchOne("SELECT COUNT(*) AS total FROM DeTai WHERE MaDot = :id", ['id' => $maDot]);
+        if (($count['total'] ?? 0) > 0) {
+            throw new \Exception("Không thể xóa đợt NCKH đang có {$count['total']} đề tài tham gia. Vui lòng xử lý các đề tài trước.");
+        }
+        $this->execute("DELETE FROM ThongBaoBieuMau WHERE MaDot = :id", ['id' => $maDot]);
+        return $this->execute("DELETE FROM DotNCKH WHERE MaDot = :id", ['id' => $maDot]);
+    }
+
     // Hướng nghiên cứu
     public function getAllResearchDirections(): array {
         return $this->fetchAll(
@@ -71,6 +80,21 @@ class DotNCKHModel extends BaseModel {
             "INSERT INTO HuongNghienCuu (MaHuongNC, TenHuongNC, MoTa) VALUES (:ma, :ten, :mota)",
             ['ma' => $ma, 'ten' => $ten, 'mota' => $mota]
         );
+    }
+
+    public function updateResearchDirection(string $ma, string $ten, ?string $mota): bool {
+        return $this->execute(
+            "UPDATE HuongNghienCuu SET TenHuongNC = :ten, MoTa = :mota WHERE MaHuongNC = :ma",
+            ['ten' => $ten, 'mota' => $mota, 'ma' => $ma]
+        );
+    }
+
+    public function deleteResearchDirection(string $ma): bool {
+        $count = $this->fetchOne("SELECT COUNT(*) AS total FROM DeTai WHERE MaHuongNC = :id", ['id' => $ma]);
+        if (($count['total'] ?? 0) > 0) {
+            throw new \Exception("Không thể xóa hướng nghiên cứu đang có {$count['total']} đề tài lựa chọn.");
+        }
+        return $this->execute("DELETE FROM HuongNghienCuu WHERE MaHuongNC = :id", ['id' => $ma]);
     }
 
     // Thông báo & Biểu mẫu
@@ -100,6 +124,27 @@ class DotNCKHModel extends BaseModel {
             'filedinhkem' => $data['FileDinhKem'] ?? null,
             'nguoidang'   => $data['NguoiDang'] ?? null
         ]);
+    }
+
+    public function updateNotification(int $id, array $data): bool {
+        $sql = "UPDATE ThongBaoBieuMau SET 
+                MaDot = :madot, 
+                TieuDe = :tieude, 
+                Loai = :loai, 
+                NoiDung = :noidung";
+        $params = [
+            'madot'   => !empty($data['MaDot']) ? $data['MaDot'] : null,
+            'tieude'  => $data['TieuDe'],
+            'loai'    => $data['Loai'],
+            'noidung' => $data['NoiDung'] ?? null,
+            'id'      => $id
+        ];
+        if (!empty($data['FileDinhKem'])) {
+            $sql .= ", FileDinhKem = :file";
+            $params['file'] = $data['FileDinhKem'];
+        }
+        $sql .= " WHERE MaThongBao = :id";
+        return $this->execute($sql, $params);
     }
 
     public function deleteNotification(int $id): bool {

@@ -170,9 +170,21 @@ require dirname(__DIR__) . '/layouts/header.php';
                                 <?= ViewHelper::e($t['NhanXetCanBo'] ?: '-') ?>
                             </td>
                             <td>
-                                <a href="<?= App::url('index.php?action=cb-chitiet-detai&id=' . $t['MaDeTai']) ?>" class="btn btn-sm btn-secondary">
-                                    Chi tiết
-                                </a>
+                                <div style="display: flex; gap: 6px; align-items: center;">
+                                    <a href="<?= App::url('index.php?action=cb-chitiet-detai&id=' . $t['MaDeTai']) ?>" class="btn btn-sm btn-secondary" title="Xem chi tiết">
+                                        Chi tiết
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick='editTopic(<?= json_encode($t, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)' title="Chỉnh sửa đề tài">
+                                        <?= ViewHelper::icon('edit') ?> Sửa
+                                    </button>
+                                    <form method="POST" action="<?= App::url('index.php?action=cb-thamdinh-detai') ?>" style="display:inline;" onsubmit="return confirm('CẢNH BÁO: Bạn có chắc chắn muốn XÓA HOÀN TOÀN đề tài <?= ViewHelper::e($t['MaDeTai']) ?> khỏi hệ thống?');">
+                                        <input type="hidden" name="sub_action" value="delete_topic">
+                                        <input type="hidden" name="madetai" value="<?= ViewHelper::e($t['MaDeTai']) ?>">
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Xóa đề tài">
+                                            <?= ViewHelper::icon('trash') ?>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -181,4 +193,72 @@ require dirname(__DIR__) . '/layouts/header.php';
         </div>
     </div>
 </div>
+
+<!-- MODAL: CHỈNH SỬA ĐỀ TÀI -->
+<div id="modal-edit-topic" class="modal-backdrop">
+    <div class="modal-container">
+        <div class="modal-header">
+            <div class="modal-title">Chỉnh Sửa Thông Tin Đề Tài</div>
+            <button type="button" class="modal-close" onclick="closeModal('modal-edit-topic')">&times;</button>
+        </div>
+        <form method="POST" action="<?= App::url('index.php?action=cb-thamdinh-detai') ?>">
+            <input type="hidden" name="sub_action" value="quick_edit_topic">
+            <input type="hidden" name="madetai" id="edit-topic-madetai">
+            <div class="modal-body">
+                <div class="grid-cols-2">
+                    <div class="form-group">
+                        <label class="form-label">Mã Đề Tài</label>
+                        <input type="text" id="edit-topic-display-madetai" class="form-control" disabled style="opacity: 0.7;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hướng Nghiên Cứu <span class="required">*</span></label>
+                        <select name="mahuongnc" id="edit-topic-mahuongnc" class="form-control" required>
+                            <?php foreach ($directions as $dir): ?>
+                                <option value="<?= ViewHelper::e($dir['MaHuongNC']) ?>"><?= ViewHelper::e($dir['TenHuongNC']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tên Đề Tài NCKH <span class="required">*</span></label>
+                    <input type="text" name="tendetai" id="edit-topic-tendetai" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Kinh Phí Dự Kiến (VNĐ)</label>
+                    <input type="number" step="100000" name="kinhphi" id="edit-topic-kinhphi" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mục Tiêu Đề Tài</label>
+                    <textarea name="muctieu" id="edit-topic-muctieu" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Sản Phẩm Dự Kiến</label>
+                    <textarea name="sanpham" id="edit-topic-sanpham" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edit-topic')">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu Đề Tài</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function editTopic(t) {
+    document.getElementById('edit-topic-madetai').value = t.MaDeTai || '';
+    document.getElementById('edit-topic-display-madetai').value = t.MaDeTai || '';
+    document.getElementById('edit-topic-tendetai').value = t.TenDeTai || '';
+    document.getElementById('edit-topic-mahuongnc').value = t.MaHuongNC || '';
+    document.getElementById('edit-topic-kinhphi').value = t.KinhPhiDuKien || 0;
+    document.getElementById('edit-topic-muctieu').value = t.MucTieu || '';
+    document.getElementById('edit-topic-sanpham').value = t.SanPhamDuKien || '';
+    openModal('modal-edit-topic');
+}
+</script>
+
 <?php require dirname(__DIR__) . '/layouts/footer.php'; ?>

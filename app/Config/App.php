@@ -5,6 +5,19 @@ class App {
     const APP_NAME = "Hệ Thống Quản Lý NCKH Sinh Viên";
     const APP_SHORT_NAME = "QL-NCKH";
     const VERSION = "1.0.0";
+    // Thông tin cơ sở đào tạo: TRƯỜNG ĐẠI HỌC TÂY BẮC (Sơn La)
+    const UNIVERSITY_NAME = "TRƯỜNG ĐẠI HỌC TÂY BẮC";
+    const UNIVERSITY_NAME_EN = "TAY BAC UNIVERSITY (UTB)";
+    const UNIVERSITY_SHORT = "ĐH TÂY BẮC";
+    const UNIVERSITY_ACRONYM = "UTB";
+    const UNIVERSITY_GOVERNING_BODY = "BỘ GIÁO DỤC VÀ ĐÀO TẠO";
+    const UNIVERSITY_LOCATION = "Sơn La";
+    const UNIVERSITY_ADDRESS = "Đường Chu Văn An, Phường Quyết Tâm, Thành phố Sơn La, Tỉnh Sơn La";
+    const UNIVERSITY_PHONE = "(+84) 212.3.751.700";
+    const UNIVERSITY_FAX = "0212.3.751.701";
+    const UNIVERSITY_EMAIL = "contact@utb.edu.vn";
+    const UNIVERSITY_DOMAIN = "https://utb.edu.vn";
+    const UNIVERSITY_INTRO_URL = "https://utb.edu.vn/gioi-thieu/";
 
     // Vai trò
     const ROLE_SINH_VIEN = "SINH_VIEN";

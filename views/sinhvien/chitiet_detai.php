@@ -1,6 +1,10 @@
 <?php
 use App\Config\App;
 use App\Helpers\ViewHelper;
+use App\Helpers\NckhFormHelper;
+
+$parsedDeXuat = NckhFormHelper::parseDeXuatData($topic['DuLieuDeXuat'] ?? null, $topic, $members);
+$parsedThuyetMinh = NckhFormHelper::parseThuyetMinhData($topic['DuLieuThuyetMinh'] ?? null, $topic, $members);
 
 $pageTitle = "Chi Tiết Đề Tài - " . $topic['MaDeTai'];
 require dirname(__DIR__) . '/layouts/header.php';
@@ -21,7 +25,10 @@ require dirname(__DIR__) . '/layouts/header.php';
                 Ngày nộp: <strong><?= ViewHelper::datetime($topic['NgayDangKy']) ?></strong>
             </div>
         </div>
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 8px;" class="no-print">
+            <button type="button" onclick="window.print()" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
+                <?= ViewHelper::icon('printer', '', 14) ?> In / Xuất A4
+            </button>
             <?php if ($topic['TrangThai'] === 'YEU_CAU_CHINH_SUA'): ?>
                 <a href="<?= App::url('index.php?action=sv-suahoso-detai&id=' . $topic['MaDeTai']) ?>" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
                     <?= ViewHelper::icon('edit', '', 14) ?> Sửa Hồ Sơ
@@ -35,9 +42,15 @@ require dirname(__DIR__) . '/layouts/header.php';
 
     <!-- TABS NAVIGATION -->
     <div class="tabs-wrapper">
-        <div class="tabs-nav">
+        <div class="tabs-nav no-print">
             <div class="tab-btn active" data-tab="tab-overview" style="display: inline-flex; align-items: center; gap: 6px;">
                 <?= ViewHelper::icon('file-text', '', 14) ?> Thông Tin Chung
+            </div>
+            <div class="tab-btn" data-tab="tab-doc-dexuat" style="display: inline-flex; align-items: center; gap: 6px;">
+                <?= ViewHelper::icon('file-text', '', 14) ?> Phiếu Đề Xuất (Mẫu 02)
+            </div>
+            <div class="tab-btn" data-tab="tab-doc-thuyetminh" style="display: inline-flex; align-items: center; gap: 6px;">
+                <?= ViewHelper::icon('file-text', '', 14) ?> Thuyết Minh Đề Tài (Mẫu 01)
             </div>
             <div class="tab-btn" data-tab="tab-members" style="display: inline-flex; align-items: center; gap: 6px;">
                 <?= ViewHelper::icon('users', '', 14) ?> Nhóm Nghiên Cứu (<?= count($members) ?>)
@@ -99,16 +112,26 @@ require dirname(__DIR__) . '/layouts/header.php';
 
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title">Hồ Sơ Đính Kèm</div>
+                            <div class="card-title">Hồ Sơ Đề Tài Trực Tuyến & Đính Kèm</div>
                         </div>
                         <div class="card-body">
                             <div style="display: flex; flex-direction: column; gap: 10px;">
-                                <a href="<?= App::url('public/' . $topic['FilePhieuThuyetMinh']) ?>" target="_blank" class="btn btn-secondary" style="justify-content: flex-start; display: inline-flex; align-items: center; gap: 8px;">
-                                    <?= ViewHelper::icon('file-text', '', 15) ?> Phiếu Thuyết Minh Đề Tài (Mẫu 01)
-                                </a>
-                                <a href="<?= App::url('public/' . $topic['FilePhieuDeXuat']) ?>" target="_blank" class="btn btn-secondary" style="justify-content: flex-start; display: inline-flex; align-items: center; gap: 8px;">
-                                    <?= ViewHelper::icon('file-text', '', 15) ?> Phiếu Đề Xuất Đề Tài (Mẫu 02)
-                                </a>
+                                <button type="button" class="btn btn-primary" onclick="document.querySelector('.tab-btn[data-tab=\'tab-doc-dexuat\']').click()" style="justify-content: flex-start; display: inline-flex; align-items: center; gap: 8px;">
+                                    <?= ViewHelper::icon('file-text', '', 15) ?> Xem Phiếu Đề Xuất (Mẫu 02 Trực Tuyến)
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="document.querySelector('.tab-btn[data-tab=\'tab-doc-thuyetminh\']').click()" style="justify-content: flex-start; display: inline-flex; align-items: center; gap: 8px;">
+                                    <?= ViewHelper::icon('file-text', '', 15) ?> Xem Thuyết Minh Đề Tài (Mẫu 01 Trực Tuyến)
+                                </button>
+                                <?php if (!empty($topic['FilePhieuThuyetMinh'])): ?>
+                                    <a href="<?= App::url('public/' . $topic['FilePhieuThuyetMinh']) ?>" target="_blank" class="btn btn-secondary" style="justify-content: flex-start; display: inline-flex; align-items: center; gap: 8px;">
+                                        <?= ViewHelper::icon('download', '', 15) ?> Tải Tệp Thuyết Minh Đã Đính Kèm
+                                    </a>
+                                <?php endif; ?>
+                                <?php if (!empty($topic['FilePhieuDeXuat'])): ?>
+                                    <a href="<?= App::url('public/' . $topic['FilePhieuDeXuat']) ?>" target="_blank" class="btn btn-secondary" style="justify-content: flex-start; display: inline-flex; align-items: center; gap: 8px;">
+                                        <?= ViewHelper::icon('download', '', 15) ?> Tải Tệp Đề Xuất Đã Đính Kèm
+                                    </a>
+                                <?php endif; ?>
                                 <div style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">
                                     Kinh phí dự trù: <strong style="color: #38bdf8;"><?= ViewHelper::money($topic['KinhPhiDuKien']) ?></strong>
                                 </div>
@@ -310,6 +333,46 @@ require dirname(__DIR__) . '/layouts/header.php';
                     <?php endif; ?>
                 </div>
             </div>
+        <!-- TAB: PHIẾU ĐỀ XUẤT (MẪU 02) -->
+        <div id="tab-doc-dexuat" class="tab-content" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; background: var(--bg-card); padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);" class="no-print">
+                <div>
+                    <span style="font-size: 15px; font-weight: 700; color: var(--text-primary);">Phiếu Đề Xuất Đề Tài NCKH Sinh Viên (Mẫu 02)</span>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Chuẩn hóa theo quy định Trường Đại học Tây Bắc - 6 mục nội dung</div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" onclick="window.print()" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
+                        <?= ViewHelper::icon('printer', '', 14) ?> In / Xuất A4
+                    </button>
+                    <?php if ($topic['TrangThai'] === 'YEU_CAU_CHINH_SUA'): ?>
+                        <a href="<?= App::url('index.php?action=sv-suahoso-detai&id=' . $topic['MaDeTai'] . '#step-2') ?>" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+                            <?= ViewHelper::icon('edit', '', 14) ?> Chỉnh Sửa Phiếu
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?= NckhFormHelper::renderPhieuDeXuatHtml($parsedDeXuat) ?>
+        </div>
+
+        <!-- TAB: THUYẾT MINH ĐỀ TÀI (MẪU 01) -->
+        <div id="tab-doc-thuyetminh" class="tab-content" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; background: var(--bg-card); padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);" class="no-print">
+                <div>
+                    <span style="font-size: 15px; font-weight: 700; color: var(--text-primary);">Thuyết Minh Đề Tài NCKH Cấp Trường Của Sinh Viên (Mẫu 01)</span>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Chuẩn hóa theo quy định Trường Đại học Tây Bắc - 13 mục nội dung</div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" onclick="window.print()" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
+                        <?= ViewHelper::icon('printer', '', 14) ?> In / Xuất A4
+                    </button>
+                    <?php if ($topic['TrangThai'] === 'YEU_CAU_CHINH_SUA'): ?>
+                        <a href="<?= App::url('index.php?action=sv-suahoso-detai&id=' . $topic['MaDeTai'] . '#step-3') ?>" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+                            <?= ViewHelper::icon('edit', '', 14) ?> Chỉnh Sửa Thuyết Minh
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?= NckhFormHelper::renderThuyetMinhHtml($parsedThuyetMinh) ?>
         </div>
     </div>
 </div>

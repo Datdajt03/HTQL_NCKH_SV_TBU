@@ -77,7 +77,17 @@ class ViewHelper {
             'star'      => "<svg $attrs><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\"/></svg>",
             'arrow-right'=> "<svg $attrs><line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\"/><polyline points=\"12 5 19 12 12 19\"/></svg>",
             'arrow-left'=> "<svg $attrs><line x1=\"19\" y1=\"12\" x2=\"5\" y2=\"12\"/><polyline points=\"12 19 5 12 12 5\"/></svg>",
+            'arrow-up'  => "<svg $attrs><line x1=\"12\" y1=\"19\" x2=\"12\" y2=\"5\"/><polyline points=\"5 12 12 5 19 12\"/></svg>",
             'refresh'   => "<svg $attrs><path d=\"M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2\"/></svg>",
+            'refresh-cw'=> "<svg $attrs><path d=\"M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16\"/><path d=\"M16 16h5v5\"/></svg>",
+            'home'      => "<svg $attrs><path d=\"m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/><polyline points=\"9 22 9 12 15 12 15 22\"/></svg>",
+            'maximize'  => "<svg $attrs><path d=\"M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3\"/></svg>",
+            'minimize'  => "<svg $attrs><path d=\"M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3\"/></svg>",
+            'globe'     => "<svg $attrs><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"2\" y1=\"12\" x2=\"22\" y2=\"12\"/><path d=\"M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z\"/></svg>",
+            'monitor'   => "<svg $attrs><rect width=\"20\" height=\"14\" x=\"2\" y=\"3\" rx=\"2\"/><line x1=\"8\" x2=\"16\" y1=\"21\" y2=\"21\"/><line x1=\"12\" x2=\"12\" y1=\"17\" y2=\"21\"/></svg>",
+            'feather'   => "<svg $attrs><path d=\"M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z\"/><line x1=\"16\" x2=\"2\" y1=\"8\" y2=\"22\"/><line x1=\"17.5\" x2=\"9\" y1=\"15\" y2=\"15\"/></svg>",
+            'cpu'       => "<svg $attrs><rect width=\"16\" height=\"16\" x=\"4\" y=\"4\" rx=\"2\"/><rect width=\"6\" height=\"6\" x=\"9\" y=\"9\" rx=\"1\"/><path d=\"M15 2v2\"/><path d=\"M15 20v2\"/><path d=\"M2 15h2\"/><path d=\"M2 9h2\"/><path d=\"M20 15h2\"/><path d=\"M20 9h2\"/><path d=\"M9 2v2\"/><path d=\"M9 20v2\"/></svg>",
+            'copy'      => "<svg $attrs><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/></svg>",
             'hash'      => "<svg $attrs><line x1=\"4\" y1=\"9\" x2=\"20\" y2=\"9\"/><line x1=\"4\" y1=\"15\" x2=\"20\" y2=\"15\"/><line x1=\"10\" y1=\"3\" x2=\"8\" y2=\"21\"/><line x1=\"16\" y1=\"3\" x2=\"14\" y2=\"21\"/></svg>",
             'target'    => "<svg $attrs><circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/></svg>",
             'sun'       => "<svg $attrs><circle cx=\"12\" cy=\"12\" r=\"5\"/><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"/><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"/><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"/><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"/><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"/><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"/><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"/><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"/></svg>",
@@ -89,8 +99,15 @@ class ViewHelper {
     /**
      * Badge trạng thái thanh lịch, tinh tế (không dùng emoji)
      */
-    public static function statusBadge(string $status): string {
+    public static function statusBadge(?string $status): string {
+        if ($status === null || $status === '') {
+            return '<span class="badge badge-secondary"><span class="badge-dot dot-secondary"></span>Chưa cập nhật</span>';
+        }
+
         $map = [
+            // Trạng thái tài khoản người dùng
+            'HOAT_DONG'         => ['text' => 'Đang hoạt động', 'class' => 'badge-success', 'dot' => 'dot-success'],
+            'KHOA'              => ['text' => 'Tài khoản bị khóa', 'class' => 'badge-danger', 'dot' => 'dot-danger'],
             'CHO_GVHD_DUYET'    => ['text' => 'Chờ GVHD duyệt', 'class' => 'badge-warning', 'dot' => 'dot-warning'],
             'GVHD_TU_CHOI'      => ['text' => 'GVHD từ chối', 'class' => 'badge-danger', 'dot' => 'dot-danger'],
             'CHO_THAM_DINH'     => ['text' => 'Chờ thẩm định', 'class' => 'badge-info', 'dot' => 'dot-info'],
@@ -122,7 +139,9 @@ class ViewHelper {
             'GIAI_NHI'          => ['text' => 'Giải Nhì', 'class' => 'badge-silver', 'dot' => 'dot-silver'],
             'GIAI_BA'           => ['text' => 'Giải Ba', 'class' => 'badge-bronze', 'dot' => 'dot-bronze'],
             'GIAI_KHUYEN_KHICH' => ['text' => 'Giải Khuyến Khích', 'class' => 'badge-cyan', 'dot' => 'dot-cyan'],
-            'KHONG'             => ['text' => 'Không xét giải', 'class' => 'badge-secondary', 'dot' => 'dot-secondary']
+            'KHONG'             => ['text' => 'Không xét giải', 'class' => 'badge-secondary', 'dot' => 'dot-secondary'],
+            'TRUONG_NHOM'       => ['text' => 'Trưởng nhóm', 'class' => 'badge-amber', 'dot' => 'dot-amber'],
+            'THANH_VIEN'        => ['text' => 'Thành viên', 'class' => 'badge-secondary', 'dot' => 'dot-secondary']
         ];
 
         $info = $map[$status] ?? ['text' => $status, 'class' => 'badge-secondary', 'dot' => 'dot-secondary'];
@@ -134,7 +153,7 @@ class ViewHelper {
         );
     }
 
-    public static function roleTitle(string $role): string {
+    public static function roleTitle(?string $role): string {
         return match ($role) {
             App::ROLE_SINH_VIEN  => 'Sinh Viên Nghiên Cứu',
             App::ROLE_GIANG_VIEN => 'Giảng Viên Hướng Dẫn',

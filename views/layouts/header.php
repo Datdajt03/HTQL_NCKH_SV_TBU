@@ -4,25 +4,29 @@ use App\Helpers\AuthHelper;
 use App\Helpers\ViewHelper;
 
 $pageTitle = $pageTitle ?? App::APP_NAME;
-$currentAction = $_GET['action'] ?? '';
-$user = AuthHelper::user();
-$currentTheme = $_COOKIE['theme'] ?? 'dark';
+$currentUser = AuthHelper::user();
+if (!isset($user) || !is_array($user)) {
+    $user = $currentUser;
+}
+$currentTheme = $_COOKIE['theme'] ?? 'light';
 ?>
 <!DOCTYPE html>
 <html lang="vi" data-theme="<?= htmlspecialchars($currentTheme) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= ViewHelper::e($pageTitle) ?> - <?= App::APP_SHORT_NAME ?></title>
+    <title><?= ViewHelper::e($pageTitle) ?> - <?= App::UNIVERSITY_SHORT ?> (UTB Sơn La)</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="<?= App::url('pic/logo.jpg') ?>">
+    <link rel="apple-touch-icon" href="<?= App::url('pic/logo.jpg') ?>">
     
     <!-- Instant Theme Synchronization to prevent FOUC -->
     <script>
         (function() {
             try {
-                const localTheme = localStorage.getItem('theme');
-                if (localTheme) {
-                    document.documentElement.setAttribute('data-theme', localTheme);
-                }
+                const localTheme = localStorage.getItem('theme') || 'light';
+                document.documentElement.setAttribute('data-theme', localTheme);
             } catch (e) {}
         })();
     </script>

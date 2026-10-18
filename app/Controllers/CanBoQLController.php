@@ -38,6 +38,8 @@ class CanBoQLController {
         $pendingApprove = $this->deTaiModel->getAllTopics('CHO_THAM_DINH');
         $readyForDefense = $this->deTaiModel->getAllTopics('CHO_NGHIEM_THU');
         $councils = $this->hoiDongModel->getAllCouncils();
+        $userStats = $this->userModel->getUserStats();
+        $financialStats = $this->deTaiModel->getFinancialOverview();
 
         require dirname(__DIR__, 2) . '/views/canboql/dashboard.php';
     }
@@ -83,6 +85,10 @@ class CanBoQLController {
                         'TrangThai'      => $_POST['trangthai']
                     ]);
                     AuthHelper::setFlash('success', "Cập nhật đợt NCKH ({$maDot}) thành công!");
+                } elseif ($subAction === 'delete_dot') {
+                    $maDot = $_POST['madot'] ?? '';
+                    $this->dotModel->delete($maDot);
+                    AuthHelper::setFlash('success', "Đã xóa đợt NCKH ({$maDot}) thành công!");
                 } elseif ($subAction === 'create_direction') {
                     $maHNC = trim($_POST['mahuongnc'] ?? '');
                     $tenHNC = trim($_POST['tenhuongnc'] ?? '');
@@ -92,6 +98,19 @@ class CanBoQLController {
                     }
                     $this->dotModel->createResearchDirection($maHNC, $tenHNC, $mota);
                     AuthHelper::setFlash('success', "Thêm hướng nghiên cứu mới thành công!");
+                } elseif ($subAction === 'update_direction') {
+                    $maHNC = trim($_POST['mahuongnc'] ?? '');
+                    $tenHNC = trim($_POST['tenhuongnc'] ?? '');
+                    $mota = trim($_POST['mota'] ?? '');
+                    if (empty($maHNC) || empty($tenHNC)) {
+                        throw new Exception("Vui lòng nhập mã và tên hướng nghiên cứu.");
+                    }
+                    $this->dotModel->updateResearchDirection($maHNC, $tenHNC, $mota);
+                    AuthHelper::setFlash('success', "Cập nhật hướng nghiên cứu thành công!");
+                } elseif ($subAction === 'delete_direction') {
+                    $maHNC = trim($_POST['mahuongnc'] ?? '');
+                    $this->dotModel->deleteResearchDirection($maHNC);
+                    AuthHelper::setFlash('success', "Đã xóa hướng nghiên cứu thành công!");
                 } elseif ($subAction === 'add_notice') {
                     $tieuDe = trim($_POST['tieude'] ?? '');
                     $loai = $_POST['loai'] ?? 'THONG_BAO';
@@ -111,6 +130,29 @@ class CanBoQLController {
                         'NguoiDang' => $officerId
                     ]);
                     AuthHelper::setFlash('success', "Đăng tải thông báo / biểu mẫu thành công!");
+                } elseif ($subAction === 'update_notice') {
+                    $noticeId = (int)($_POST['id'] ?? 0);
+                    $tieuDe = trim($_POST['tieude'] ?? '');
+                    $loai = $_POST['loai'] ?? 'THONG_BAO';
+                    $maDot = $_POST['madot'] ?? null;
+                    $noiDung = trim($_POST['noidung'] ?? '');
+                    if (!$noticeId || empty($tieuDe)) {
+                        throw new Exception("Vui lòng nhập tiêu đề hợp lệ.");
+                    }
+                    $fileDinhKem = UploadHelper::upload('file_dinhkem');
+
+                    $this->dotModel->updateNotification($noticeId, [
+                        'MaDot' => $maDot,
+                        'TieuDe' => $tieuDe,
+                        'Loai' => $loai,
+                        'NoiDung' => $noiDung,
+                        'FileDinhKem' => $fileDinhKem
+                    ]);
+                    AuthHelper::setFlash('success', "Cập nhật thông báo / biểu mẫu thành công!");
+                } elseif ($subAction === 'delete_notice') {
+                    $noticeId = (int)($_POST['id'] ?? 0);
+                    $this->dotModel->deleteNotification($noticeId);
+                    AuthHelper::setFlash('success', "Đã xóa thông báo / biểu mẫu thành công!");
                 }
                 header("Location: " . App::url('index.php?action=cb-quanly-dot'));
                 exit;
@@ -127,26 +169,56 @@ class CanBoQLController {
         require dirname(__DIR__, 2) . '/views/canboql/quanly_dot.php';
     }
 
-    // UC 12: Thẩm định đề tài NCKH
+    // UC 12: Thẩm định & Quản lý đề tài NCKH
     public function thamDinhDeTai(): void {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
-                $maDeTai = $_POST['madetai'] ?? '';
-                $decision = $_POST['decision'] ?? ''; // 'PHE_DUYET', 'YEU_CAU_SUA', 'TU_CHOI'
-                $comments = trim($_POST['comments'] ?? '');
+                $subAction = $_POST['sub_action'] ?? '';
+                if ($subAction === 'delete_topic') {
+                    $maDeTai = $_POST['madetai'] ?? '';
+                    if (empty($maDeTai)) {
+                        throw new Exception("Thiếu mã đề tài cần xóa.");
+                    }
+                    $this->deTaiModel->deleteTopic($maDeTai);
+                    AuthHelper::setFlash('success', "Đã xóa đề tài {$maDeTai} thành công khỏi hệ thống!");
+                } elseif ($subAction === 'quick_edit_topic') {
+                    $maDeTai = $_POST['madetai'] ?? '';
+                    $tenDeTai = trim($_POST['tendetai'] ?? '');
+                    $maHuongNC = $_POST['mahuongnc'] ?? '';
+                    $kinhPhi = floatval($_POST['kinhphi'] ?? 0);
+                    $mucTieu = trim($_POST['muctieu'] ?? '');
+                    $sanPham = trim($_POST['sanpham'] ?? '');
 
-                if (empty($maDeTai) || empty($decision)) {
-                    throw new Exception("Thiếu thông tin xét duyệt đề tài.");
+                    if (empty($maDeTai) || empty($tenDeTai) || empty($maHuongNC)) {
+                        throw new Exception("Vui lòng điền đầy đủ tên đề tài và hướng nghiên cứu.");
+                    }
+                    $this->deTaiModel->updateTopicBasic($maDeTai, [
+                        'TenDeTai'      => $tenDeTai,
+                        'MaHuongNC'     => $maHuongNC,
+                        'KinhPhiDuKien' => $kinhPhi,
+                        'MucTieu'       => $mucTieu,
+                        'SanPhamDuKien' => $sanPham
+                    ]);
+                    AuthHelper::setFlash('success', "Đã cập nhật thông tin cơ bản cho đề tài {$maDeTai}!");
+                } else {
+                    $maDeTai = $_POST['madetai'] ?? '';
+                    $decision = $_POST['decision'] ?? ''; // 'PHE_DUYET', 'YEU_CAU_SUA', 'TU_CHOI'
+                    $comments = trim($_POST['comments'] ?? '');
+
+                    if (empty($maDeTai) || empty($decision)) {
+                        throw new Exception("Thiếu thông tin xét duyệt đề tài.");
+                    }
+
+                    $this->deTaiModel->officerApprove($maDeTai, $decision, $comments);
+
+                    $msg = match ($decision) {
+                        'PHE_DUYET'   => "Đã PHÊ DUYỆT đề tài {$maDeTai}! Đề tài chính thức chuyển sang giai đoạn ĐANG THỰC HIỆN.",
+                        'YEU_CAU_SUA' => "Đã gửi YÊU CẦU SỬA ĐỔI tới nhóm sinh viên đề tài {$maDeTai}.",
+                        default       => "Đã TỪ CHỐI / HỦY đề tài {$maDeTai}."
+                    };
+                    AuthHelper::setFlash('success', $msg);
                 }
 
-                $this->deTaiModel->officerApprove($maDeTai, $decision, $comments);
-
-                $msg = match ($decision) {
-                    'PHE_DUYET'   => "Đã PHÊ DUYỆT đề tài {$maDeTai}! Đề tài chính thức chuyển sang giai đoạn ĐANG THỰC HIỆN.",
-                    'YEU_CAU_SUA' => "Đã gửi YÊU CẦU SỬA ĐỔI tới nhóm sinh viên đề tài {$maDeTai}.",
-                    default       => "Đã TỪ CHỐI / HỦY đề tài {$maDeTai}."
-                };
-                AuthHelper::setFlash('success', $msg);
                 header("Location: " . App::url('index.php?action=cb-thamdinh-detai'));
                 exit;
 
@@ -159,6 +231,7 @@ class CanBoQLController {
         $pendingTopics = $this->deTaiModel->getAllTopics('CHO_THAM_DINH', $filterDot);
         $allTopics = $this->deTaiModel->getAllTopics(null, $filterDot);
         $dots = $this->dotModel->getAll();
+        $directions = $this->dotModel->getAllResearchDirections();
 
         require dirname(__DIR__, 2) . '/views/canboql/thamdinh_detai.php';
     }
@@ -170,6 +243,29 @@ class CanBoQLController {
         $dots = $this->dotModel->getAll();
 
         require dirname(__DIR__, 2) . '/views/canboql/quanly_tiendo.php';
+    }
+
+    // UC 13.1: Cán bộ QL thẩm định và phê duyệt tiến độ
+    public function duyetTienDo(): void {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                $reportId = (int)($_POST['report_id'] ?? 0);
+                $danhGia = trim($_POST['danh_gia_can_bo'] ?? ''); // 'DAT_TIEN_DO', 'CHAM_TIEN_DO', 'CAN_NHAC_NHO'
+                $nhanXet = trim($_POST['nhan_xet_can_bo'] ?? '');
+
+                if (!$reportId || empty($danhGia)) {
+                    throw new Exception("Vui lòng chọn kết luận thẩm định tiến độ của Cán bộ Quản lý.");
+                }
+
+                $this->tienDoModel->canBoReview($reportId, $danhGia, $nhanXet);
+                AuthHelper::setFlash('success', "Cán bộ quản lý đã lưu thẩm định và phê duyệt tiến độ thành công!");
+            } catch (Exception $e) {
+                AuthHelper::setFlash('danger', $e->getMessage());
+            }
+        }
+        $redirectUrl = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : App::url('index.php?action=cb-quanly-tiendo');
+        header("Location: " . $redirectUrl);
+        exit;
     }
 
     // UC 14: Tổ chức hội đồng nghiệm thu + Nhập điểm đánh giá
@@ -387,5 +483,178 @@ class CanBoQLController {
         $award = $this->khenThuongModel->getByTopic($maDeTai);
 
         require dirname(__DIR__, 2) . '/views/canboql/chitiet_detai.php';
+    }
+
+    public function xoaDeTai(): void {
+        $maDeTai = $_GET['id'] ?? ($_POST['madetai'] ?? '');
+        if (empty($maDeTai)) {
+            AuthHelper::setFlash('danger', 'Thiếu mã đề tài cần xóa.');
+            header("Location: " . App::url('index.php?action=cb-thamdinh-detai'));
+            exit;
+        }
+
+        try {
+            $this->deTaiModel->deleteTopic($maDeTai);
+            AuthHelper::setFlash('success', "Đã xóa đề tài {$maDeTai} thành công!");
+        } catch (Exception $e) {
+            AuthHelper::setFlash('danger', "Lỗi khi xóa đề tài: " . $e->getMessage());
+        }
+
+        header("Location: " . App::url('index.php?action=cb-thamdinh-detai'));
+        exit;
+    }
+
+    // UC Quản lý Người Dùng (Admin & Cán bộ QL)
+    public function quanLyNguoiDung(): void {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $subAction = $_POST['sub_action'] ?? '';
+            try {
+                if ($subAction === 'create_user') {
+                    $username = strtoupper(trim($_POST['username'] ?? ''));
+                    $hoTen = trim($_POST['hoten'] ?? '');
+                    $email = trim(strtolower($_POST['email'] ?? ''));
+                    $sdt = trim($_POST['sdt'] ?? '');
+                    $role = $_POST['vaitro'] ?? App::ROLE_SINH_VIEN;
+                    $password = $_POST['password'] ?? '123456';
+
+                    if (empty($username) || empty($hoTen) || empty($email)) {
+                        throw new Exception("Vui lòng nhập đầy đủ Mã người dùng, Họ tên và Email.");
+                    }
+                    if ($this->userModel->isUsernameTaken($username)) {
+                        throw new Exception("Mã người dùng '{$username}' đã tồn tại.");
+                    }
+                    if ($this->userModel->isEmailTaken($email)) {
+                        throw new Exception("Email '{$email}' đã được đăng ký bởi tài khoản khác.");
+                    }
+
+                    $roleData = [];
+                    if ($role === App::ROLE_SINH_VIEN) {
+                        $roleData = [
+                            'Lop'      => trim($_POST['sv_lop'] ?? 'K64 CNTT'),
+                            'Khoa'     => trim($_POST['sv_khoa'] ?? 'Khoa Công nghệ Thông tin'),
+                            'NganhHoc' => trim($_POST['sv_nganh'] ?? 'Khoa học Máy tính'),
+                            'KhoaHoc'  => trim($_POST['sv_khoahoc'] ?? '2023 - 2027')
+                        ];
+                    } elseif ($role === App::ROLE_GIANG_VIEN) {
+                        $roleData = [
+                            'HocHam'           => !empty($_POST['gv_hocham']) ? trim($_POST['gv_hocham']) : null,
+                            'HocVi'            => trim($_POST['gv_hocvi'] ?? 'Thạc sĩ'),
+                            'DonViCongTac'     => trim($_POST['gv_donvicongtac'] ?? 'Khoa Công nghệ Thông tin'),
+                            'LinhVucNghienCuu' => trim($_POST['gv_linhvuc'] ?? '')
+                        ];
+                    } elseif ($role === App::ROLE_CAN_BO_QL || $role === App::ROLE_ADMIN) {
+                        $roleData = [
+                            'PhongBan' => trim($_POST['cb_phongban'] ?? 'Phòng Quản lý Khoa học'),
+                            'ChucVu'   => trim($_POST['cb_chucvu'] ?? 'Chuyên viên')
+                        ];
+                    }
+
+                    $hash = password_hash($password, PASSWORD_BCRYPT);
+                    $this->userModel->registerUser([
+                        'MaNguoiDung' => $username,
+                        'MatKhauHash' => $hash,
+                        'HoTen'       => $hoTen,
+                        'Email'       => $email,
+                        'SoDienThoai' => $sdt,
+                        'VaiTro'      => $role,
+                        'TrangThai'   => 'HOAT_DONG'
+                    ], $roleData);
+
+                    AuthHelper::setFlash('success', "Thêm người dùng mới [{$username} - {$hoTen}] thành công!");
+
+                } elseif ($subAction === 'update_user') {
+                    $userId = trim($_POST['user_id'] ?? '');
+                    $hoTen = trim($_POST['hoten'] ?? '');
+                    $email = trim(strtolower($_POST['email'] ?? ''));
+                    $sdt = trim($_POST['sdt'] ?? '');
+                    $status = $_POST['trangthai'] ?? 'HOAT_DONG';
+
+                    if (empty($userId) || empty($hoTen) || empty($email)) {
+                        throw new Exception("Họ tên và Email không được để trống.");
+                    }
+                    if ($this->userModel->isEmailTaken($email, $userId)) {
+                        throw new Exception("Email '{$email}' đã tồn tại cho tài khoản khác.");
+                    }
+
+                    $user = $this->userModel->findById($userId);
+                    if (!$user) {
+                        throw new Exception("Người dùng {$userId} không tồn tại.");
+                    }
+
+                    $role = $user['VaiTro'];
+                    $roleData = [];
+                    if ($role === App::ROLE_SINH_VIEN) {
+                        $roleData = [
+                            'Lop'      => trim($_POST['sv_lop'] ?? ''),
+                            'Khoa'     => trim($_POST['sv_khoa'] ?? ''),
+                            'NganhHoc' => trim($_POST['sv_nganh'] ?? ''),
+                            'KhoaHoc'  => trim($_POST['sv_khoahoc'] ?? '')
+                        ];
+                    } elseif ($role === App::ROLE_GIANG_VIEN) {
+                        $roleData = [
+                            'HocHam'           => !empty($_POST['gv_hocham']) ? trim($_POST['gv_hocham']) : null,
+                            'HocVi'            => trim($_POST['gv_hocvi'] ?? 'Thạc sĩ'),
+                            'DonViCongTac'     => trim($_POST['gv_donvicongtac'] ?? ''),
+                            'LinhVucNghienCuu' => trim($_POST['gv_linhvuc'] ?? '')
+                        ];
+                    } elseif ($role === App::ROLE_CAN_BO_QL || $role === App::ROLE_ADMIN) {
+                        $roleData = [
+                            'PhongBan' => trim($_POST['cb_phongban'] ?? ''),
+                            'ChucVu'   => trim($_POST['cb_chucvu'] ?? '')
+                        ];
+                    }
+
+                    $this->userModel->updateProfileDetailed($userId, [
+                        'HoTen'       => $hoTen,
+                        'Email'       => $email,
+                        'SoDienThoai' => $sdt
+                    ], $roleData);
+
+                    // Cập nhật trạng thái
+                    $this->userModel->execute("UPDATE NguoiDung SET TrangThai = :st WHERE MaNguoiDung = :id", [
+                        'st' => $status,
+                        'id' => $userId
+                    ]);
+
+                    // Nếu có đổi mật khẩu
+                    $newPass = trim($_POST['new_password'] ?? '');
+                    if (!empty($newPass)) {
+                        if (strlen($newPass) < 6) {
+                            throw new Exception("Mật khẩu mới phải có tối thiểu 6 ký tự.");
+                        }
+                        $this->userModel->updatePassword($userId, password_hash($newPass, PASSWORD_BCRYPT));
+                    }
+
+                    AuthHelper::setFlash('success', "Cập nhật thông tin người dùng [{$userId}] thành công!");
+
+                } elseif ($subAction === 'toggle_status') {
+                    $userId = trim($_POST['user_id'] ?? '');
+                    $newStatus = $this->userModel->toggleUserStatus($userId);
+                    $statusText = ($newStatus === 'HOAT_DONG') ? 'Kích hoạt' : 'Khóa';
+                    AuthHelper::setFlash('success', "Đã {$statusText} tài khoản [{$userId}] thành công!");
+
+                } elseif ($subAction === 'delete_user') {
+                    $userId = trim($_POST['user_id'] ?? '');
+                    $this->userModel->deleteUser($userId);
+                    AuthHelper::setFlash('success', "Đã xóa tài khoản [{$userId}] khỏi hệ thống thành công!");
+                }
+
+                header("Location: " . App::url('index.php?action=cb-quanly-nguoidung'));
+                exit;
+
+            } catch (Exception $e) {
+                AuthHelper::setFlash('danger', $e->getMessage());
+                header("Location: " . App::url('index.php?action=cb-quanly-nguoidung'));
+                exit;
+            }
+        }
+
+        $search = trim($_GET['search'] ?? '');
+        $filterRole = $_GET['role'] ?? null;
+        $filterStatus = $_GET['status'] ?? null;
+
+        $users = $this->userModel->getAllUsers($search ?: null, $filterRole, $filterStatus);
+
+        require dirname(__DIR__, 2) . '/views/canboql/quanly_nguoidung.php';
     }
 }

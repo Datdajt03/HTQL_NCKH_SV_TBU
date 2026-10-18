@@ -18,12 +18,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    const currentTheme = document.documentElement.getAttribute('data-theme') || localStorage.getItem('theme') || 'dark';
+    const currentTheme = document.documentElement.getAttribute('data-theme') || localStorage.getItem('theme') || 'light';
     updateThemeUI(currentTheme);
 
     if (themeToggleBtn) {
         themeToggleBtn.addEventListener('click', function () {
-            const activeTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const activeTheme = document.documentElement.getAttribute('data-theme') || 'light';
             const nextTheme = (activeTheme === 'dark') ? 'light' : 'dark';
             
             localStorage.setItem('theme', nextTheme);

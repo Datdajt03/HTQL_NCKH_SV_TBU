@@ -4,50 +4,7 @@
    Palette: Slate / Deep Indigo / Sapphire / Emerald / Amber
    ========================================================================== */
 
-:root, [data-theme="dark"] {
-    --bg-primary: #0b1120;
-    --bg-secondary: #0f172a;
-    --bg-card: rgba(30, 41, 59, 0.7);
-    --bg-card-hover: rgba(30, 41, 59, 0.9);
-    --bg-sidebar: #090e1a;
-    --bg-modal: #1e293b;
-    
-    --border-color: rgba(255, 255, 255, 0.08);
-    --border-focus: #3b82f6;
-
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --text-inverse: #0f172a;
-
-    --accent-blue: #3b82f6;
-    --accent-indigo: #6366f1;
-    --accent-purple: #8b5cf6;
-    --accent-emerald: #10b981;
-    --accent-amber: #f59e0b;
-    --accent-rose: #f43f5e;
-    --accent-cyan: #06b6d4;
-
-    --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
-    --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    --gradient-card: linear-gradient(145deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
-
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 24px;
-    --radius-full: 9999px;
-
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
-    --shadow-glow: 0 0 25px -5px rgba(59, 130, 246, 0.35);
-
-    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-[data-theme="light"] {
+:root, [data-theme="light"] {
     --bg-primary: #f8fafc;
     --bg-secondary: #f1f5f9;
     --bg-card: #ffffff;
@@ -76,10 +33,55 @@
     --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
 
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+
     --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
     --shadow-glow: 0 0 20px -3px rgba(37, 99, 235, 0.2);
+
+    --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --transition: all 0.2s var(--ease-smooth);
+}
+
+[data-theme="dark"] {
+    --bg-primary: #0b1120;
+    --bg-secondary: #0f172a;
+    --bg-card: rgba(30, 41, 59, 0.7);
+    --bg-card-hover: rgba(30, 41, 59, 0.9);
+    --bg-sidebar: #090e1a;
+    --bg-modal: #1e293b;
+    
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-focus: #3b82f6;
+
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-inverse: #0f172a;
+
+    --accent-blue: #3b82f6;
+    --accent-indigo: #6366f1;
+    --accent-purple: #8b5cf6;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --accent-cyan: #06b6d4;
+
+    --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+    --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    --gradient-card: linear-gradient(145deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+    --shadow-glow: 0 0 25px -5px rgba(59, 130, 246, 0.35);
 }
 
 * {
@@ -92,8 +94,8 @@ body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: var(--bg-primary);
     background-image: 
-        radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.07) 0%, transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.07) 0%, transparent 40%);
+        radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.04) 0%, transparent 40%);
     background-attachment: fixed;
     color: var(--text-primary);
     line-height: 1.6;
@@ -144,24 +146,45 @@ a:hover {
     border-bottom: 1px solid var(--border-color);
 }
 
+a.sidebar-header {
+    text-decoration: none;
+    color: inherit;
+}
+
 .brand-logo {
     width: 44px;
     height: 44px;
     border-radius: var(--radius-md);
-    background: var(--gradient-primary);
+    background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 20px;
     box-shadow: var(--shadow-glow);
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: transform 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-smooth);
+}
+
+.brand-logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.45);
+}
+
+.brand-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    display: block;
 }
 
 .brand-text h1 {
     font-size: 16px;
     font-weight: 800;
     letter-spacing: -0.02em;
-    color: #fff;
+    color: var(--text-primary);
     line-height: 1.2;
 }
 
@@ -295,7 +318,7 @@ a:hover {
 
 .top-navbar {
     height: 70px;
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border-color);
     padding: 0 32px;
@@ -305,12 +328,13 @@ a:hover {
     position: sticky;
     top: 0;
     z-index: 90;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
 }
 
 .page-title h2 {
     font-size: 20px;
     font-weight: 800;
-    color: #fff;
+    color: var(--text-primary);
     letter-spacing: -0.01em;
 }
 
@@ -972,6 +996,38 @@ select.form-control {
 }
 
 /* ==========================================================================
+   DARK MODE OVERRIDES
+   ========================================================================== */
+
+[data-theme="dark"] body {
+    background-color: var(--bg-primary);
+    background-image: 
+        radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.07) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.07) 0%, transparent 40%);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .brand-text h1,
+[data-theme="dark"] .page-title h2 {
+    color: #fff;
+}
+
+[data-theme="dark"] .top-navbar {
+    background: rgba(15, 23, 42, 0.8);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: none;
+}
+
+[data-theme="dark"] .app-sidebar {
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .sidebar-user {
+    background: rgba(15, 23, 42, 0.6);
+}
+
+/* ==========================================================================
    LIGHT MODE DESIGN SYSTEM & ADAPTIVE STYLING
    ========================================================================== */
 
@@ -1245,16 +1301,16 @@ select.form-control {
     font-family: inherit;
     cursor: pointer;
     transition: var(--transition);
-    border: 1px solid var(--border-color);
-    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid #cbd5e1;
+    background: #f1f5f9;
     color: var(--text-primary);
     user-select: none;
 }
 
 .theme-toggle-btn:hover {
     transform: translateY(-1px);
-    border-color: var(--accent-blue);
-    background: rgba(59, 130, 246, 0.12);
+    border-color: #94a3b8;
+    background: #e2e8f0;
 }
 
 .theme-toggle-btn .svg-icon {
@@ -1267,6 +1323,25 @@ select.form-control {
 }
 
 /* Icon visibility based on active theme */
+:root .theme-toggle-btn .icon-sun,
+[data-theme="light"] .theme-toggle-btn .icon-sun {
+    display: none;
+}
+:root .theme-toggle-btn .icon-moon,
+[data-theme="light"] .theme-toggle-btn .icon-moon {
+    display: inline-flex;
+    color: #4f46e5;
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+[data-theme="dark"] .theme-toggle-btn:hover {
+    border-color: var(--accent-blue);
+    background: rgba(59, 130, 246, 0.12);
+}
 [data-theme="dark"] .theme-toggle-btn .icon-moon {
     display: none;
 }
@@ -1275,19 +1350,889 @@ select.form-control {
     color: #fbbf24;
 }
 
-[data-theme="light"] .theme-toggle-btn {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
+/* ==========================================================================
+   BIỂU MẪU HÀNH CHÍNH NCKH (MẪU 01 THUYẾT MINH & MẪU 02 ĐỀ XUẤT)
+   Chuẩn văn bản theo quy chuẩn Trường Đại học Tây Bắc (Sơn La)
+   ========================================================================== */
+.nckh-doc-wrapper {
+    background: #ffffff;
+    color: #111827;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 14pt;
+    line-height: 1.5;
+    padding: 40px 48px;
+    margin: 0 auto 32px auto;
+    max-width: 860px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    position: relative;
+}
+
+[data-theme="dark"] .nckh-doc-wrapper {
+    background: #ffffff;
     color: #0f172a;
 }
-[data-theme="light"] .theme-toggle-btn:hover {
-    background: #e2e8f0;
-    border-color: #94a3b8;
+
+.nckh-doc-table-header {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
 }
-[data-theme="light"] .theme-toggle-btn .icon-sun {
-    display: none;
+
+.nckh-doc-table-header td {
+    padding: 0;
+    vertical-align: top;
+    font-family: 'Times New Roman', Times, serif;
 }
-[data-theme="light"] .theme-toggle-btn .icon-moon {
+
+.nckh-co-quan {
+    font-size: 12.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #000;
+}
+
+.nckh-don-vi {
+    font-size: 13pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #000;
+}
+
+.nckh-quoc-hieu {
+    font-size: 12.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #000;
+}
+
+.nckh-tieu-ngu {
+    font-size: 13pt;
+    font-weight: 700;
+    color: #000;
+}
+
+.nckh-divider {
+    width: 120px;
+    height: 1px;
+    background: #000;
+    margin: 4px auto 6px auto;
+}
+
+.nckh-ngay-thang {
+    font-size: 13pt;
+    font-style: italic;
+    color: #000;
+    margin-top: 4px;
+}
+
+.nckh-doc-title-block {
+    text-align: center;
+    margin: 28px 0 24px 0;
+}
+
+.nckh-doc-main-title {
+    font-size: 17pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #000;
+    margin-bottom: 4px;
+}
+
+.nckh-doc-sub-title {
+    font-size: 14pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #000;
+    margin-bottom: 4px;
+}
+
+.nckh-doc-academic-year {
+    font-size: 13.5pt;
+    font-weight: 700;
+    color: #000;
+}
+
+.nckh-doc-content {
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.nckh-section {
+    margin-bottom: 18px;
+}
+
+.nckh-section-title {
+    font-size: 13.5pt;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.nckh-sub-section-title {
+    font-size: 13pt;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 4px;
+}
+
+.nckh-section-body {
+    font-size: 13.5pt;
+    color: #111827;
+}
+
+.nckh-highlight-box {
+    background: #f8fafc;
+    border-left: 3px solid #2563eb;
+    padding: 10px 14px;
+    border-radius: 4px;
+}
+
+.nckh-text-justified {
+    text-align: justify;
+    text-justify: inter-word;
+    line-height: 1.55;
+}
+
+.nckh-table-bordered {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    font-size: 13pt;
+}
+
+.nckh-table-bordered th,
+.nckh-table-bordered td {
+    border: 1px solid #334155;
+    padding: 8px 10px;
+    vertical-align: top;
+    color: #000;
+}
+
+.nckh-table-bordered th {
+    background: #f1f5f9;
+    font-weight: 700;
+    text-align: left;
+}
+
+.nckh-checkbox-label {
     display: inline-flex;
-    color: #4f46e5;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5pt;
+    cursor: default;
 }
+
+.nckh-check-box {
+    font-size: 16pt;
+    line-height: 1;
+}
+
+.nckh-products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px 12px;
+    margin-top: 8px;
+    padding: 10px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+    .nckh-products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.nckh-product-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5pt;
+}
+
+.nckh-signature-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 32px;
+}
+
+.nckh-signature-table td {
+    border: none;
+    padding: 8px 12px;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.nckh-sig-date {
+    font-style: italic;
+    font-size: 13pt;
+    margin-bottom: 4px;
+}
+
+.nckh-sig-role {
+    font-weight: 700;
+    font-size: 13.5pt;
+    text-transform: uppercase;
+}
+
+.nckh-sig-note {
+    font-style: italic;
+    font-size: 12pt;
+    color: #475569;
+}
+
+.nckh-sig-space {
+    height: 70px;
+}
+
+.nckh-sig-name {
+    font-weight: 700;
+    font-size: 13.5pt;
+}
+
+/* TABS TRỰC QUAN ĐIỀN FORM NCKH */
+.nckh-form-tabs {
+    display: flex;
+    gap: 8px;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.nckh-tab-btn {
+    padding: 10px 18px;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    border: 1px solid transparent;
+    border-bottom: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.nckh-tab-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.nckh-tab-btn.active {
+    color: #60a5fa;
+    background: var(--bg-card);
+    border-color: var(--border-color);
+    border-top: 2px solid #3b82f6;
+    margin-bottom: -6px;
+    padding-bottom: 14px;
+}
+
+/* In ấn chuẩn A4 */
+@media print {
+    body {
+        background: #fff !important;
+        color: #000 !important;
+    }
+    .app-sidebar, .app-navbar, .navbar, .sidebar, .btn, .no-print, .nckh-form-tabs, .card-header button {
+        display: none !important;
+    }
+    .app-main, .content-body {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .nckh-doc-wrapper {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
+}
+
+/* ==========================================================================
+   60FPS GPU-ACCELERATED ANIMATIONS & THEME SMOOTHING
+   ========================================================================== */
+
+/* GPU promotion for buttery smooth transitions */
+.card, .stat-card, .btn, .modal-container, .brand-logo, .nav-item {
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+.content-body {
+    animation: fadeInUp 0.35s var(--ease-spring) both;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 12px, 0);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes modalPop {
+    0% {
+        opacity: 0;
+        transform: scale3d(0.94, 0.94, 1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 16px -3px rgba(37, 99, 235, 0.25);
+    }
+    50% {
+        box-shadow: 0 0 28px 2px rgba(37, 99, 235, 0.45);
+    }
+}
+
+.modal-backdrop.show .modal-container {
+    animation: modalPop 0.25s var(--ease-spring) both;
+}
+
+/* Snappy, responsive hover states on interactive cards */
+.card:hover {
+    border-color: rgba(59, 130, 246, 0.35);
+}
+
+.stat-card:hover {
+    transform: translate3d(0, -3px, 0);
+    box-shadow: var(--shadow-glow);
+}
+
+/* Button click feedback */
+.btn {
+    transition: transform 0.16s var(--ease-spring), background-color 0.16s var(--ease-smooth), border-color 0.16s var(--ease-smooth), box-shadow 0.16s var(--ease-smooth);
+}
+
+.btn:active {
+    transform: translate3d(0, 1px, 0) scale(0.98);
+}
+
+/* Nav item smooth slide */
+.nav-item {
+    transition: transform 0.18s var(--ease-spring), background-color 0.18s var(--ease-smooth), color 0.18s var(--ease-smooth);
+}
+
+.nav-item:hover {
+    transform: translate3d(3px, 0, 0);
+}
+
+/* Global Smooth Theme Transition between Light and Dark */
+body, .app-sidebar, .app-navbar, .card, .stat-card, .table-responsive, table.data-table, .modal-container, .form-control {
+    transition: background-color 0.22s var(--ease-smooth), border-color 0.22s var(--ease-smooth), color 0.22s var(--ease-smooth);
+}
+
+/* Reduced Motion for Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ==========================================================================
+   PORTAL DASHBOARD & TRƯỜNG ĐẠI HỌC TÂY BẮC (UTB - SƠN LA) SHOWCASE STYLES
+   ========================================================================== */
+
+/* Public Top Navigation Bar */
+.portal-public-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+.portal-brand-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.portal-brand-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: var(--shadow-glow);
+    border: 2px solid rgba(37, 99, 235, 0.3);
+    flex-shrink: 0;
+}
+
+.portal-brand-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.portal-brand-text h1 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+.portal-brand-text span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.portal-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.portal-nav-links a {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+.portal-nav-links a:hover {
+    color: var(--accent-blue);
+    background: rgba(37, 99, 235, 0.08);
+}
+
+/* Hero Section */
+.portal-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    padding: 42px 36px;
+    margin-bottom: 28px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(99, 102, 241, 0.08) 50%, rgba(139, 92, 246, 0.12) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .portal-hero {
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.35) 0%, rgba(49, 46, 129, 0.3) 50%, rgba(88, 28, 135, 0.35) 100%);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+.portal-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    background: rgba(37, 99, 235, 0.12);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    color: var(--accent-blue);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+}
+
+[data-theme="dark"] .portal-hero-badge {
+    background: rgba(59, 130, 246, 0.2);
+    color: #93c5fd;
+    border-color: rgba(96, 165, 250, 0.35);
+}
+
+.portal-hero-title {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.25;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+    margin-bottom: 14px;
+}
+
+.portal-hero-title span.highlight {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.portal-hero-desc {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 820px;
+    margin-bottom: 24px;
+}
+
+.portal-hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Faculty Grid & Cards */
+.faculty-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 20px;
+}
+
+.faculty-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.22s var(--ease-spring), border-color 0.22s var(--ease-smooth), box-shadow 0.22s var(--ease-smooth);
+}
+
+.faculty-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(37, 99, 235, 0.4);
+    box-shadow: var(--shadow-lg);
+}
+
+.faculty-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+.faculty-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.faculty-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+    flex: 1;
+}
+
+.faculty-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.faculty-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+/* Timeline */
+.timeline-list {
+    position: relative;
+    padding-left: 32px;
+}
+
+.timeline-list::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 11px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent-blue) 0%, var(--accent-indigo) 50%, var(--accent-purple) 100%);
+    border-radius: 2px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -32px;
+    top: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 3px solid var(--accent-blue);
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.timeline-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.timeline-year {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--accent-blue);
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.timeline-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.timeline-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Roadmap Flow */
+.roadmap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+}
+
+.roadmap-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.roadmap-card:hover {
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.roadmap-step-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-glow);
+}
+
+/* Award Showcase */
+.award-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 16px;
+}
+
+.award-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    display: flex;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s var(--ease-spring), border-color 0.2s ease;
+}
+
+.award-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(245, 158, 11, 0.4);
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.12);
+}
+
+.award-medal {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.25) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #d97706;
+}
+
+.award-info h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-bottom: 6px;
+}
+
+.award-meta {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Footer Showcase */
+.portal-footer-strip {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-color);
+    padding: 36px 32px 24px 32px;
+    margin-top: 48px;
+}
+
+@media (max-width: 768px) {
+    .portal-hero {
+        padding: 28px 20px;
+    }
+    .portal-hero-title {
+        font-size: 22px;
+    }
+    .portal-public-nav {
+        padding: 10px 16px;
+        flex-wrap: wrap;
+    }
+    .portal-nav-links {
+        display: none;
+    }
+}
+
+/* Floating Back to Top Button */
+.portal-back-to-top {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    transition: transform 0.2s var(--ease-spring), opacity 0.2s ease, box-shadow 0.2s ease;
+    z-index: 999;
+}
+
+.portal-back-to-top:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+}
+
+.portal-back-to-top:active {
+    transform: translateY(0) scale(0.95);
+}
+
+/* ==========================================================================
+   UTB BROWSER WINDOW & ANIMATIONS (60FPS RESPONSIVE)
+   ========================================================================== */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.92); }
+}
+
+.utb-quick-nav {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+.utb-quick-nav.active {
+    background: var(--gradient-primary) !important;
+    color: #ffffff !important;
+    border-color: rgba(37, 99, 235, 0.5) !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35) !important;
+    font-weight: 700 !important;
+}
+
+.utb-browser-window {
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(37, 99, 235, 0.25);
+}
+
+[data-theme="light"] .utb-browser-window {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] #utb-url-input {
+    color: #1e293b !important;
+}
+
+[data-theme="dark"] #utb-url-input {
+    color: #f1f5f9 !important;
+}
+
+
+
