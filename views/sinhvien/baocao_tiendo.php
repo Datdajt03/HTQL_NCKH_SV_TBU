@@ -204,6 +204,7 @@ if (empty($tienDoKeHoach)) {
                                 <th>Thẩm Định Cán Bộ QL</th>
                                 <th>Ngày Nộp</th>
                                 <th>File</th>
+                                <th>Tác Vụ</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -298,6 +299,18 @@ if (empty($tienDoKeHoach)) {
                                             </a>
                                         <?php else: ?>
                                             <span style="color: var(--text-muted); font-size: 12px;">Link trực tiếp</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if (empty($r['DanhGiaTienDo']) && empty($r['DanhGiaCanBo'])): ?>
+                                            <form method="POST" action="<?= App::url('index.php?action=sv-xoa-baocao-tiendo') ?>" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa báo cáo tiến độ đợt <?= ViewHelper::e($r['DotBaoCao']) ?> này không?');">
+                                                <input type="hidden" name="id" value="<?= (int)$r['MaBaoCaoTD'] ?>">
+                                                <button type="submit" class="btn btn-sm btn-danger" title="Xóa báo cáo tiến độ chưa duyệt">
+                                                    <?= ViewHelper::icon('trash') ?>
+                                                </button>
+                                            </form>
+                                        <?php else: ?>
+                                            <span style="font-size: 11px; color: var(--text-muted);">Đã đánh giá</span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

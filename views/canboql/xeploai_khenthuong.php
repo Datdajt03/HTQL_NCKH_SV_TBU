@@ -99,9 +99,18 @@ require dirname(__DIR__) . '/layouts/header.php';
                                     <div style="font-size: 11px; color: var(--text-muted);"><?= ViewHelper::date($a['NgayQuyetDinh']) ?></div>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-secondary" onclick="editAward('<?= ViewHelper::e($a['MaDeTai']) ?>', <?= (float)$a['DiemTongKet'] ?>, '<?= $a['XepLoai'] ?>', '<?= $a['DanhHieuKhenThuong'] ?>', '<?= ViewHelper::e($a['SoQuyetDinh'] ?? '') ?>', <?= (float)$a['TienThuong'] ?>)">
-                                        <?= ViewHelper::icon('edit') ?> Sửa
-                                    </button>
+                                    <div style="display: flex; gap: 6px;">
+                                        <button type="button" class="btn btn-sm btn-secondary" onclick="editAward('<?= ViewHelper::e($a['MaDeTai']) ?>', <?= (float)$a['DiemTongKet'] ?>, '<?= $a['XepLoai'] ?>', '<?= $a['DanhHieuKhenThuong'] ?>', '<?= ViewHelper::e($a['SoQuyetDinh'] ?? '') ?>', <?= (float)$a['TienThuong'] ?>)">
+                                            <?= ViewHelper::icon('edit') ?> Sửa
+                                        </button>
+                                        <form method="POST" action="<?= App::url('index.php?action=cb-xeploai-khenthuong') ?>" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa kết quả xếp loại / khen thưởng của đề tài <?= ViewHelper::e($a['MaDeTai']) ?>?');">
+                                            <input type="hidden" name="sub_action" value="delete_award">
+                                            <input type="hidden" name="madetai" value="<?= ViewHelper::e($a['MaDeTai']) ?>">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Xóa kết quả khen thưởng">
+                                                <?= ViewHelper::icon('trash') ?>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

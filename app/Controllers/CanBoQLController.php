@@ -157,8 +157,10 @@ class CanBoQLController {
                 header("Location: " . App::url('index.php?action=cb-quanly-dot'));
                 exit;
 
-            } catch (Exception $e) {
-                $error = $e->getMessage();
+            } catch (\Throwable $e) {
+                AuthHelper::setFlash('danger', "Thao tác thất bại: " . $e->getMessage());
+                header("Location: " . App::url('index.php?action=cb-quanly-dot'));
+                exit;
             }
         }
 
@@ -222,8 +224,10 @@ class CanBoQLController {
                 header("Location: " . App::url('index.php?action=cb-thamdinh-detai'));
                 exit;
 
-            } catch (Exception $e) {
-                AuthHelper::setFlash('danger', $e->getMessage());
+            } catch (\Throwable $e) {
+                AuthHelper::setFlash('danger', "Thao tác thất bại: " . $e->getMessage());
+                header("Location: " . App::url('index.php?action=cb-thamdinh-detai'));
+                exit;
             }
         }
 
@@ -370,13 +374,73 @@ class CanBoQLController {
 
                     $this->hoiDongModel->finalizeDefense($maPC, $diemTB, $ketLuan, $fileBienBan);
                     AuthHelper::setFlash('success', "Tổng kết kết quả nghiệm thu thành công! Điểm trung bình: {$diemTB}, Kết luận: {$ketLuan}.");
+
+                } elseif ($subAction === 'update_council') {
+                    $maHD = trim($_POST['mahoidong'] ?? '');
+                    $tenHD = trim($_POST['tenhoidong'] ?? '');
+                    $loaiHD = $_POST['loaihoidong'] ?? 'NGHIEM_THU';
+                    $ngayTL = $_POST['ngaythanhlap'] ?? date('Y-m-d');
+                    $soQD = trim($_POST['soquyetdinh'] ?? '');
+                    $trangThai = $_POST['trangthai'] ?? 'HOAT_DONG';
+
+                    if (empty($maHD) || empty($tenHD)) {
+                        throw new Exception("Mã hội đồng và tên hội đồng không được để trống.");
+                    }
+
+                    $this->hoiDongModel->updateCouncil($maHD, [
+                        'TenHoiDong'   => $tenHD,
+                        'LoaiHoiDong'  => $loaiHD,
+                        'NgayThanhLap' => $ngayTL,
+                        'SoQuyetDinh'  => $soQD,
+                        'TrangThai'    => $trangThai
+                    ]);
+
+                    AuthHelper::setFlash('success', "Cập nhật thông tin hội đồng ({$maHD}) thành công!");
+                    header("Location: " . App::url('index.php?action=cb-tochuc-nghiemthu&council_id=' . urlencode($maHD)));
+                    exit;
+
+                } elseif ($subAction === 'delete_council') {
+                    $maHD = trim($_POST['mahoidong'] ?? '');
+                    if (empty($maHD)) {
+                        throw new Exception("Thiếu mã hội đồng cần xóa.");
+                    }
+                    $this->hoiDongModel->deleteCouncil($maHD);
+                    AuthHelper::setFlash('success', "Đã xóa hội đồng ({$maHD}) thành công!");
+                    header("Location: " . App::url('index.php?action=cb-tochuc-nghiemthu'));
+                    exit;
+
+                } elseif ($subAction === 'unassign_topic') {
+                    $maPC = (int)($_POST['maphancong'] ?? 0);
+                    $councilId = $_POST['mahoidong'] ?? '';
+                    if ($maPC <= 0) {
+                        throw new Exception("Thiếu thông tin phân công bảo vệ cần gỡ.");
+                    }
+                    $this->hoiDongModel->unassignTopic($maPC);
+                    AuthHelper::setFlash('success', "Đã gỡ đề tài khỏi phân công hội đồng thành công!");
+                    header("Location: " . App::url('index.php?action=cb-tochuc-nghiemthu' . (!empty($councilId) ? '&council_id=' . urlencode($councilId) : '')));
+                    exit;
+
+                } elseif ($subAction === 'delete_scoresheet') {
+                    $maPhieu = (int)($_POST['maphieu'] ?? 0);
+                    $councilId = $_POST['mahoidong'] ?? '';
+                    if ($maPhieu <= 0) {
+                        throw new Exception("Thiếu mã phiếu điểm cần xóa.");
+                    }
+                    $this->hoiDongModel->deleteScoreSheet($maPhieu);
+                    AuthHelper::setFlash('success', "Đã xóa phiếu chấm điểm thành công!");
+                    header("Location: " . App::url('index.php?action=cb-tochuc-nghiemthu' . (!empty($councilId) ? '&council_id=' . urlencode($councilId) : '')));
+                    exit;
                 }
 
-                header("Location: " . App::url('index.php?action=cb-tochuc-nghiemthu'));
+                $redirectCouncil = !empty($_POST['mahoidong']) ? '&council_id=' . urlencode($_POST['mahoidong']) : '';
+                header("Location: " . App::url('index.php?action=cb-tochuc-nghiemthu' . $redirectCouncil));
                 exit;
 
-            } catch (Exception $e) {
-                $error = $e->getMessage();
+            } catch (\Throwable $e) {
+                $redirectCouncil = !empty($_POST['mahoidong']) ? '&council_id=' . urlencode($_POST['mahoidong']) : '';
+                AuthHelper::setFlash('danger', "Thao tác thất bại: " . $e->getMessage());
+                header("Location: " . App::url('index.php?action=cb-tochuc-nghiemthu' . $redirectCouncil));
+                exit;
             }
         }
 
@@ -394,6 +458,10 @@ class CanBoQLController {
             $selectedCouncil = $this->hoiDongModel->findById($selectedCouncilId);
             $councilMembers = $this->hoiDongModel->getCouncilMembers($selectedCouncilId);
             $assignedTopics = $this->hoiDongModel->getAssignmentsByCouncil($selectedCouncilId);
+            foreach ($assignedTopics as &$assign) {
+                $assign['scoreSheets'] = $this->hoiDongModel->getScoreSheets($assign['MaPhanCong']);
+            }
+            unset($assign);
         }
 
         require dirname(__DIR__, 2) . '/views/canboql/tochuc_nghiemthu.php';
@@ -404,7 +472,19 @@ class CanBoQLController {
         $error = null;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $subAction = $_POST['sub_action'] ?? '';
             try {
+                if ($subAction === 'delete_award') {
+                    $maDeTai = $_POST['madetai'] ?? '';
+                    if (empty($maDeTai)) {
+                        throw new Exception("Thiếu thông tin mã đề tài để xóa kết quả khen thưởng.");
+                    }
+                    $this->khenThuongModel->deleteAward($maDeTai);
+                    AuthHelper::setFlash('success', "Đã xóa kết quả xếp loại / khen thưởng của đề tài {$maDeTai} thành công!");
+                    header("Location: " . App::url('index.php?action=cb-xeploai-khenthuong'));
+                    exit;
+                }
+
                 $maDeTai = $_POST['madetai'] ?? '';
                 $diem = (float)($_POST['diem_tongket'] ?? 0);
                 $xepLoai = $_POST['xep_loai'] ?? '';
@@ -433,8 +513,10 @@ class CanBoQLController {
                 header("Location: " . App::url('index.php?action=cb-xeploai-khenthuong'));
                 exit;
 
-            } catch (Exception $e) {
-                $error = $e->getMessage();
+            } catch (\Throwable $e) {
+                AuthHelper::setFlash('danger', "Thao tác thất bại: " . $e->getMessage());
+                header("Location: " . App::url('index.php?action=cb-xeploai-khenthuong'));
+                exit;
             }
         }
 
@@ -642,8 +724,8 @@ class CanBoQLController {
                 header("Location: " . App::url('index.php?action=cb-quanly-nguoidung'));
                 exit;
 
-            } catch (Exception $e) {
-                AuthHelper::setFlash('danger', $e->getMessage());
+            } catch (\Throwable $e) {
+                AuthHelper::setFlash('danger', "Thao tác thất bại: " . $e->getMessage());
                 header("Location: " . App::url('index.php?action=cb-quanly-nguoidung'));
                 exit;
             }

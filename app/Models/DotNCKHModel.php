@@ -59,12 +59,32 @@ class DotNCKHModel extends BaseModel {
     }
 
     public function delete(string $maDot): bool {
-        $count = $this->fetchOne("SELECT COUNT(*) AS total FROM DeTai WHERE MaDot = :id", ['id' => $maDot]);
-        if (($count['total'] ?? 0) > 0) {
-            throw new \Exception("Không thể xóa đợt NCKH đang có {$count['total']} đề tài tham gia. Vui lòng xử lý các đề tài trước.");
+        $this->db->beginTransaction();
+        try {
+            // 1. Xóa thông báo biểu mẫu gắn với đợt
+            $this->execute("DELETE FROM ThongBaoBieuMau WHERE MaDot = :id", ['id' => $maDot]);
+
+            // 2. Xóa các phân công hội đồng liên quan đến các đề tài thuộc đợt
+            $topics = $this->fetchAll("SELECT MaDeTai FROM DeTai WHERE MaDot = :id", ['id' => $maDot]);
+            foreach ($topics as $t) {
+                $this->execute("DELETE FROM PhanCongHoiDong WHERE MaDeTai = :id", ['id' => $t['MaDeTai']]);
+            }
+
+            // 3. Xóa các đề tài thuộc đợt (sẽ cascade sang các bảng con)
+            $this->execute("DELETE FROM DeTai WHERE MaDot = :id", ['id' => $maDot]);
+
+            // 4. Xóa hội đồng nghiệm thu thuộc đợt (sẽ cascade sang thành viên & phân công)
+            $this->execute("DELETE FROM HoiDong WHERE MaDot = :id", ['id' => $maDot]);
+
+            // 5. Xóa chính đợt NCKH
+            $res = $this->execute("DELETE FROM DotNCKH WHERE MaDot = :id", ['id' => $maDot]);
+
+            $this->db->commit();
+            return $res;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
         }
-        $this->execute("DELETE FROM ThongBaoBieuMau WHERE MaDot = :id", ['id' => $maDot]);
-        return $this->execute("DELETE FROM DotNCKH WHERE MaDot = :id", ['id' => $maDot]);
     }
 
     // Hướng nghiên cứu
@@ -90,11 +110,36 @@ class DotNCKHModel extends BaseModel {
     }
 
     public function deleteResearchDirection(string $ma): bool {
-        $count = $this->fetchOne("SELECT COUNT(*) AS total FROM DeTai WHERE MaHuongNC = :id", ['id' => $ma]);
-        if (($count['total'] ?? 0) > 0) {
-            throw new \Exception("Không thể xóa hướng nghiên cứu đang có {$count['total']} đề tài lựa chọn.");
+        $this->db->beginTransaction();
+        try {
+            $count = $this->fetchOne("SELECT COUNT(*) AS total FROM DeTai WHERE MaHuongNC = :id", ['id' => $ma]);
+            if (($count['total'] ?? 0) > 0) {
+                $fallback = 'HNC_KHAC';
+                if ($ma === $fallback) {
+                    $other = $this->fetchOne("SELECT MaHuongNC FROM HuongNghienCuu WHERE MaHuongNC != :ma LIMIT 1", ['ma' => $ma]);
+                    $fallback = $other ? $other['MaHuongNC'] : null;
+                } else {
+                    $exists = $this->fetchOne("SELECT MaHuongNC FROM HuongNghienCuu WHERE MaHuongNC = :f", ['f' => $fallback]);
+                    if (!$exists) {
+                        $this->createResearchDirection('HNC_KHAC', 'Hướng nghiên cứu khác & Liên ngành', 'Tự động tạo để lưu trữ các đề tài khi xóa hướng nghiên cứu');
+                    }
+                }
+
+                if ($fallback && $fallback !== $ma) {
+                    $this->execute("UPDATE DeTai SET MaHuongNC = :fallback WHERE MaHuongNC = :ma", [
+                        'fallback' => $fallback,
+                        'ma'       => $ma
+                    ]);
+                }
+            }
+
+            $res = $this->execute("DELETE FROM HuongNghienCuu WHERE MaHuongNC = :id", ['id' => $ma]);
+            $this->db->commit();
+            return $res;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
         }
-        return $this->execute("DELETE FROM HuongNghienCuu WHERE MaHuongNC = :id", ['id' => $ma]);
     }
 
     // Thông báo & Biểu mẫu

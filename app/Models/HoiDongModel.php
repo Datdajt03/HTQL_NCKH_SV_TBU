@@ -204,4 +204,77 @@ class HoiDongModel extends BaseModel {
             throw $e;
         }
     }
+
+    public function updateCouncil(string $maHoiDong, array $data, ?array $members = null): bool {
+        $this->db->beginTransaction();
+        try {
+            $sql = "UPDATE HoiDong SET
+                        TenHoiDong = :ten,
+                        LoaiHoiDong = :loai,
+                        NgayThanhLap = :ngay,
+                        SoQuyetDinh = :soqd,
+                        TrangThai = :trangthai
+                    WHERE MaHoiDong = :ma";
+            $this->execute($sql, [
+                'ten'       => $data['TenHoiDong'],
+                'loai'      => $data['LoaiHoiDong'] ?? 'NGHIEM_THU',
+                'ngay'      => $data['NgayThanhLap'] ?? date('Y-m-d'),
+                'soqd'      => $data['SoQuyetDinh'] ?? null,
+                'trangthai' => $data['TrangThai'] ?? 'HOAT_DONG',
+                'ma'        => $maHoiDong
+            ]);
+
+            if ($members !== null && is_array($members) && count($members) > 0) {
+                $this->execute("DELETE FROM ThanhVienHoiDong WHERE MaHoiDong = :id", ['id' => $maHoiDong]);
+                $memberSql = "INSERT INTO ThanhVienHoiDong (MaHoiDong, MaNguoiDung, VaiTroHoiDong) VALUES (:mahd, :mand, :vaitro)";
+                foreach ($members as $m) {
+                    if (!empty($m['MaNguoiDung'])) {
+                        $this->execute($memberSql, [
+                            'mahd'   => $maHoiDong,
+                            'mand'   => $m['MaNguoiDung'],
+                            'vaitro' => $m['VaiTroHoiDong']
+                        ]);
+                    }
+                }
+            }
+
+            $this->db->commit();
+            return true;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    public function deleteCouncil(string $maHoiDong): bool {
+        $this->db->beginTransaction();
+        try {
+            $this->execute("DELETE FROM PhieuDanhGia WHERE MaPhanCong IN (SELECT MaPhanCong FROM PhanCongHoiDong WHERE MaHoiDong = :hd1)", ['hd1' => $maHoiDong]);
+            $this->execute("DELETE FROM PhanCongHoiDong WHERE MaHoiDong = :hd2", ['hd2' => $maHoiDong]);
+            $this->execute("DELETE FROM ThanhVienHoiDong WHERE MaHoiDong = :hd3", ['hd3' => $maHoiDong]);
+            $res = $this->execute("DELETE FROM HoiDong WHERE MaHoiDong = :id", ['id' => $maHoiDong]);
+            $this->db->commit();
+            return $res;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    public function unassignTopic(int $maPhanCong): bool {
+        $this->db->beginTransaction();
+        try {
+            $this->execute("DELETE FROM PhieuDanhGia WHERE MaPhanCong = :id", ['id' => $maPhanCong]);
+            $res = $this->execute("DELETE FROM PhanCongHoiDong WHERE MaPhanCong = :id", ['id' => $maPhanCong]);
+            $this->db->commit();
+            return $res;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    public function deleteScoreSheet(int $maPhieu): bool {
+        return $this->execute("DELETE FROM PhieuDanhGia WHERE MaPhieu = :id", ['id' => $maPhieu]);
+    }
 }

@@ -142,6 +142,9 @@ try {
         case 'sv-xoa-detai':
             (new SinhVienController())->xoaDeTai();
             break;
+        case 'sv-xoa-baocao-tiendo':
+            (new SinhVienController())->xoaBaoCaoTienDo();
+            break;
 
         // --- PHÂN HỆ GIẢNG VIÊN HƯỚNG DẪN (4 Use Cases) ---
         case 'gv-dashboard':

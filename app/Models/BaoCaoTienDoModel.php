@@ -89,4 +89,8 @@ class BaoCaoTienDoModel extends BaseModel {
         $sql .= " ORDER BY dt.MaDeTai ASC";
         return $this->fetchAll($sql, $params);
     }
+
+    public function deleteReport(int $id): bool {
+        return $this->execute("DELETE FROM BaoCaoTienDo WHERE MaBaoCaoTD = :id", ['id' => $id]);
+    }
 }

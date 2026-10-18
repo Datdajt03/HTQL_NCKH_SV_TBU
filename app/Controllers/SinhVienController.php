@@ -767,7 +767,7 @@ class SinhVienController {
             exit;
         }
 
-        if (!in_array($topic['TrangThai'], ['CHO_GVHD_DUYET', 'GVHD_TU_CHOI', 'YEU_CAU_CHINH_SUA', 'HUY'])) {
+        if (!in_array($topic['TrangThai'], ['CHO_GVHD_DUYET', 'GVHD_TU_CHOI', 'YEU_CAU_CHINH_SUA', 'CHO_THAM_DINH', 'CAN_BO_TU_CHOI', 'HUY'])) {
             AuthHelper::setFlash('danger', 'Không thể xóa đề tài đang ở trạng thái ' . $topic['TrangThai'] . '. Vui lòng liên hệ Cán bộ Quản lý.');
             header("Location: " . App::url('index.php?action=sv-dashboard'));
             exit;
@@ -781,6 +781,54 @@ class SinhVienController {
         }
 
         header("Location: " . App::url('index.php?action=sv-dashboard'));
+        exit;
+    }
+
+    public function xoaBaoCaoTienDo(): void {
+        $studentId = AuthHelper::id();
+        $id = (int)($_GET['id'] ?? ($_POST['id'] ?? 0));
+        if ($id <= 0) {
+            AuthHelper::setFlash('danger', 'Thiếu mã báo cáo cần xóa.');
+            header("Location: " . App::url('index.php?action=sv-baocao-tiendo'));
+            exit;
+        }
+
+        $report = $this->tienDoModel->findById($id);
+        if (!$report) {
+            AuthHelper::setFlash('danger', 'Không tìm thấy báo cáo tiến độ.');
+            header("Location: " . App::url('index.php?action=sv-baocao-tiendo'));
+            exit;
+        }
+
+        $members = $this->deTaiModel->getMembers($report['MaDeTai']);
+        $isMember = false;
+        foreach ($members as $m) {
+            if ($m['MaSV'] === $studentId) {
+                $isMember = true;
+                break;
+            }
+        }
+
+        if (!AuthHelper::isAdmin() && !$isMember) {
+            AuthHelper::setFlash('danger', 'Bạn không có quyền xóa báo cáo tiến độ này.');
+            header("Location: " . App::url('index.php?action=sv-baocao-tiendo'));
+            exit;
+        }
+
+        if (!empty($report['DanhGiaTienDo']) || !empty($report['DanhGiaCanBo'])) {
+            AuthHelper::setFlash('danger', 'Báo cáo đã được đánh giá, không thể xóa.');
+            header("Location: " . App::url('index.php?action=sv-baocao-tiendo'));
+            exit;
+        }
+
+        try {
+            $this->tienDoModel->deleteReport($id);
+            AuthHelper::setFlash('success', 'Đã xóa báo cáo tiến độ thành công!');
+        } catch (\Throwable $e) {
+            AuthHelper::setFlash('danger', 'Lỗi khi xóa báo cáo: ' . $e->getMessage());
+        }
+
+        header("Location: " . App::url('index.php?action=sv-baocao-tiendo'));
         exit;
     }
 }

@@ -123,4 +123,25 @@ class BaoCaoTongKetModel extends BaseModel {
             throw $e;
         }
     }
+
+    public function deleteFinalReport(int $id): bool {
+        $this->db->beginTransaction();
+        try {
+            $this->execute("DELETE FROM SanPhamNghienCuu WHERE MaBaoCaoTK = :id", ['id' => $id]);
+            $res = $this->execute("DELETE FROM BaoCaoTongKet WHERE MaBaoCaoTK = :id", ['id' => $id]);
+            $this->db->commit();
+            return $res;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    public function deleteFinalReportByTopic(string $maDeTai): bool {
+        $report = $this->fetchOne("SELECT MaBaoCaoTK FROM BaoCaoTongKet WHERE MaDeTai = :id", ['id' => $maDeTai]);
+        if ($report) {
+            return $this->deleteFinalReport((int)$report['MaBaoCaoTK']);
+        }
+        return false;
+    }
 }

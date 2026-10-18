@@ -107,4 +107,12 @@ class KhenThuongModel extends BaseModel {
             'awardDistribution' => $awardDistribution
         ];
     }
+
+    public function deleteAward(string $maDeTai): bool {
+        return $this->execute("DELETE FROM KetQuaKhenThuong WHERE MaDeTai = :id", ['id' => $maDeTai]);
+    }
+
+    public function deleteAwardById(int $maKetQua): bool {
+        return $this->execute("DELETE FROM KetQuaKhenThuong WHERE MaKetQua = :id", ['id' => $maKetQua]);
+    }
 }

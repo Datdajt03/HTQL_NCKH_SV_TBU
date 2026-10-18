@@ -59,7 +59,19 @@ require dirname(__DIR__) . '/layouts/header.php';
                             Ngày lập: <?= ViewHelper::date($selectedCouncil['NgayThanhLap']) ?>
                         </div>
                     </div>
-                    <?= ViewHelper::statusBadge($selectedCouncil['TrangThai']) ?>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <?= ViewHelper::statusBadge($selectedCouncil['TrangThai']) ?>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="openModal('modal-edit-council')">
+                            <?= ViewHelper::icon('edit') ?> Sửa Hội Đồng
+                        </button>
+                        <form method="POST" action="<?= App::url('index.php?action=cb-tochuc-nghiemthu') ?>" style="display:inline;" onsubmit="return confirm('CẢNH BÁO: Bạn có chắc chắn muốn xóa hội đồng <?= ViewHelper::e($selectedCouncil['MaHoiDong']) ?>? Các phân công bảo vệ và phiếu điểm liên quan sẽ bị xóa.');">
+                            <input type="hidden" name="sub_action" value="delete_council">
+                            <input type="hidden" name="mahoidong" value="<?= ViewHelper::e($selectedCouncil['MaHoiDong']) ?>">
+                            <button type="submit" class="btn btn-sm btn-danger" title="Xóa hội đồng">
+                                <?= ViewHelper::icon('trash') ?> Xóa
+                            </button>
+                        </form>
+                    </div>
                 </div>
 
                 <!-- DANH SÁCH THÀNH VIÊN HỘI ĐỒNG -->
@@ -132,8 +144,33 @@ require dirname(__DIR__) . '/layouts/header.php';
                                         </div>
                                     </div>
 
+                                    <!-- DANH SÁCH PHIẾU ĐIỂM ĐÃ NHẬP -->
+                                    <?php if (!empty($assign['scoreSheets'])): ?>
+                                        <div style="background: rgba(15, 23, 42, 0.4); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 14px; border: 1px solid rgba(255, 255, 255, 0.05);">
+                                            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">
+                                                Chi Tiết Phiếu Chấm Của Giám Khảo (<?= count($assign['scoreSheets']) ?> phiếu):
+                                            </div>
+                                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                                <?php foreach ($assign['scoreSheets'] as $ps): ?>
+                                                    <div style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.05); padding: 6px 10px; border-radius: var(--radius-sm); font-size: 12px;">
+                                                        <span style="color: #60a5fa; font-weight: 600;"><?= ViewHelper::e($ps['TenGiamKhao']) ?> (<?= ViewHelper::e($ps['VaiTroHoiDong'] ?? 'GK') ?>):</span>
+                                                        <strong style="color: #38bdf8;"><?= number_format((float)$ps['TongDiem'], 1) ?>đ</strong>
+                                                        <form method="POST" action="<?= App::url('index.php?action=cb-tochuc-nghiemthu') ?>" style="display:inline; margin:0;" onsubmit="return confirm('Bạn có chắc muốn xóa phiếu chấm của giám khảo <?= ViewHelper::e($ps['TenGiamKhao']) ?>?');">
+                                                            <input type="hidden" name="sub_action" value="delete_scoresheet">
+                                                            <input type="hidden" name="maphieu" value="<?= (int)$ps['MaPhieu'] ?>">
+                                                            <input type="hidden" name="mahoidong" value="<?= ViewHelper::e($selectedCouncil['MaHoiDong']) ?>">
+                                                            <button type="submit" class="btn btn-sm btn-danger" style="padding: 2px 6px; font-size: 11px;" title="Xóa phiếu chấm này">
+                                                                <?= ViewHelper::icon('trash', '', 12) ?>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+
                                     <!-- NÚT THAO TÁC CHẤM ĐIỂM & TỔNG KẾT -->
-                                    <div style="display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 14px;">
+                                    <div style="display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 14px; flex-wrap: wrap;">
                                         <a href="<?= App::url('index.php?action=cb-chitiet-detai&id=' . $assign['MaDeTai']) ?>" class="btn btn-sm btn-secondary">
                                             <?= ViewHelper::icon('search') ?> Xem Toàn Bộ Hồ Sơ & Sản Phẩm
                                         </a>
@@ -145,6 +182,15 @@ require dirname(__DIR__) . '/layouts/header.php';
                                         <button type="button" class="btn btn-sm btn-success" onclick="openFinalizeModal(<?= $assign['MaPhanCong'] ?>, '<?= ViewHelper::e($assign['MaDeTai']) ?>')">
                                             <?= ViewHelper::icon('check-circle') ?> Tổng Kết Nghiệm Thu
                                         </button>
+
+                                        <form method="POST" action="<?= App::url('index.php?action=cb-tochuc-nghiemthu') ?>" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn gỡ đề tài <?= ViewHelper::e($assign['MaDeTai']) ?> khỏi phân công của hội đồng này?');">
+                                            <input type="hidden" name="sub_action" value="unassign_topic">
+                                            <input type="hidden" name="maphancong" value="<?= (int)$assign['MaPhanCong'] ?>">
+                                            <input type="hidden" name="mahoidong" value="<?= ViewHelper::e($selectedCouncil['MaHoiDong']) ?>">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Gỡ đề tài khỏi hội đồng">
+                                                <?= ViewHelper::icon('trash') ?> Gỡ Phân Công
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -410,6 +456,60 @@ require dirname(__DIR__) . '/layouts/header.php';
         </form>
     </div>
 </div>
+
+<?php if ($selectedCouncil): ?>
+<!-- MODAL: CHỈNH SỬA HỘI ĐỒNG -->
+<div id="modal-edit-council" class="modal-backdrop">
+    <div class="modal-container" style="max-width: 650px;">
+        <div class="modal-header">
+            <div class="modal-title">Chỉnh Sửa Thông Tin Hội Đồng: <?= ViewHelper::e($selectedCouncil['MaHoiDong']) ?></div>
+            <button type="button" class="modal-close" onclick="closeModal('modal-edit-council')">&times;</button>
+        </div>
+        <form method="POST" action="<?= App::url('index.php?action=cb-tochuc-nghiemthu') ?>">
+            <input type="hidden" name="sub_action" value="update_council">
+            <input type="hidden" name="mahoidong" value="<?= ViewHelper::e($selectedCouncil['MaHoiDong']) ?>">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Tên Hội Đồng Nghiệm Thu <span class="required">*</span></label>
+                    <input type="text" name="tenhoidong" class="form-control" value="<?= ViewHelper::e($selectedCouncil['TenHoiDong']) ?>" required>
+                </div>
+
+                <div class="grid-cols-2">
+                    <div class="form-group">
+                        <label class="form-label">Loại Hội Đồng <span class="required">*</span></label>
+                        <select name="loaihoidong" class="form-control" required>
+                            <option value="NGHIEM_THU" <?= $selectedCouncil['LoaiHoiDong'] === 'NGHIEM_THU' ? 'selected' : '' ?>>Hội đồng Nghiệm thu chính thức</option>
+                            <option value="THAM_DINH" <?= $selectedCouncil['LoaiHoiDong'] === 'THAM_DINH' ? 'selected' : '' ?>>Hội đồng Thẩm định sơ bộ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Trạng Thái <span class="required">*</span></label>
+                        <select name="trangthai" class="form-control" required>
+                            <option value="HOAT_DONG" <?= $selectedCouncil['TrangThai'] === 'HOAT_DONG' ? 'selected' : '' ?>>Đang hoạt động</option>
+                            <option value="HOAN_THANH" <?= $selectedCouncil['TrangThai'] === 'HOAN_THANH' ? 'selected' : '' ?>>Hoàn thành nghiệm thu</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid-cols-2">
+                    <div class="form-group">
+                        <label class="form-label">Ngày Thành Lập <span class="required">*</span></label>
+                        <input type="date" name="ngaythanhlap" class="form-control" value="<?= ViewHelper::e($selectedCouncil['NgayThanhLap']) ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số Quyết Định</label>
+                        <input type="text" name="soquyetdinh" class="form-control" value="<?= ViewHelper::e($selectedCouncil['SoQuyetDinh'] ?? '') ?>" placeholder="VD: QĐ-135/QĐ-ĐH-NCKH">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edit-council')">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+<?php endif; ?>
 
 <script>
 function openScoreSheetModal(maPhanCong, maDeTai) {

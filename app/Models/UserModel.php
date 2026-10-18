@@ -212,30 +212,62 @@ class UserModel extends BaseModel {
         return $newStatus;
     }
 
-    public function deleteUser(string $userId): bool {
+    public function deleteUser(string $userId, bool $cascadeTopics = true): bool {
         // Kiểm tra xem người dùng có phải là ADMIN hệ thống không
         if ($userId === 'ADMIN') {
             throw new \Exception("Không được phép xóa tài khoản Quản trị viên tối cao (ADMIN)!");
         }
 
-        // Kiểm tra xem người dùng có đề tài đang chủ trì hoặc hướng dẫn không
-        $countDt = $this->fetchOne(
-            "SELECT COUNT(*) AS total FROM DeTai WHERE MaGVHD = :id",
-            ['id' => $userId]
-        );
-        if (($countDt['total'] ?? 0) > 0) {
-            throw new \Exception("Không thể xóa giảng viên đang hướng dẫn {$countDt['total']} đề tài NCKH. Hãy chuyển đề tài hoặc khóa tài khoản.");
-        }
+        $this->db->beginTransaction();
+        try {
+            if ($cascadeTopics) {
+                // Xóa các đề tài do người này làm GVHD
+                $gvTopics = $this->fetchAll("SELECT MaDeTai FROM DeTai WHERE MaGVHD = :id", ['id' => $userId]);
+                foreach ($gvTopics as $t) {
+                    $this->execute("DELETE FROM PhanCongHoiDong WHERE MaDeTai = :id", ['id' => $t['MaDeTai']]);
+                    $this->execute("DELETE FROM DeTai WHERE MaDeTai = :id", ['id' => $t['MaDeTai']]);
+                }
 
-        $countTv = $this->fetchOne(
-            "SELECT COUNT(*) AS total FROM ThanhVienDeTai WHERE MaSV = :id AND VaiTro = 'TRUONG_NHOM'",
-            ['id' => $userId]
-        );
-        if (($countTv['total'] ?? 0) > 0) {
-            throw new \Exception("Không thể xóa sinh viên đang là trưởng nhóm của đề tài NCKH. Hãy chuyển quyền trưởng nhóm hoặc xóa đề tài trước.");
-        }
+                // Xóa các đề tài mà sinh viên này làm trưởng nhóm
+                $svTopics = $this->fetchAll("SELECT MaDeTai FROM ThanhVienDeTai WHERE MaSV = :id AND VaiTro = 'TRUONG_NHOM'", ['id' => $userId]);
+                foreach ($svTopics as $t) {
+                    $this->execute("DELETE FROM PhanCongHoiDong WHERE MaDeTai = :id", ['id' => $t['MaDeTai']]);
+                    $this->execute("DELETE FROM DeTai WHERE MaDeTai = :id", ['id' => $t['MaDeTai']]);
+                }
+            } else {
+                $countDt = $this->fetchOne("SELECT COUNT(*) AS total FROM DeTai WHERE MaGVHD = :id", ['id' => $userId]);
+                if (($countDt['total'] ?? 0) > 0) {
+                    throw new \Exception("Không thể xóa giảng viên đang hướng dẫn {$countDt['total']} đề tài NCKH. Hãy chuyển đề tài hoặc khóa tài khoản.");
+                }
+                $countTv = $this->fetchOne("SELECT COUNT(*) AS total FROM ThanhVienDeTai WHERE MaSV = :id AND VaiTro = 'TRUONG_NHOM'", ['id' => $userId]);
+                if (($countTv['total'] ?? 0) > 0) {
+                    throw new \Exception("Không thể xóa sinh viên đang là trưởng nhóm của đề tài NCKH. Hãy chuyển quyền trưởng nhóm hoặc xóa đề tài trước.");
+                }
+            }
 
-        return $this->execute("DELETE FROM NguoiDung WHERE MaNguoiDung = :id", ['id' => $userId]);
+            // Xóa phiếu đánh giá do người này chấm
+            $this->execute("DELETE FROM PhieuDanhGia WHERE MaGiamKhao = :id", ['id' => $userId]);
+            // Xóa thành viên hội đồng
+            $this->execute("DELETE FROM ThanhVienHoiDong WHERE MaNguoiDung = :id", ['id' => $userId]);
+            // Xóa thành viên đề tài (vai trò thành viên thông thường)
+            $this->execute("DELETE FROM ThanhVienDeTai WHERE MaSV = :id", ['id' => $userId]);
+            // Giải phóng ràng buộc thông báo do cán bộ đăng
+            $this->execute("UPDATE ThongBaoBieuMau SET NguoiDang = NULL WHERE NguoiDang = :id", ['id' => $userId]);
+            // Giải phóng ràng buộc đợt do cán bộ tạo
+            $this->execute("UPDATE DotNCKH SET MaCanBoTao = NULL WHERE MaCanBoTao = :id", ['id' => $userId]);
+
+            // Xóa role tables
+            $this->execute("DELETE FROM SinhVien WHERE MaSV = :id", ['id' => $userId]);
+            $this->execute("DELETE FROM GiangVien WHERE MaGV = :id", ['id' => $userId]);
+            $this->execute("DELETE FROM CanBoQL WHERE MaCB = :id", ['id' => $userId]);
+
+            $res = $this->execute("DELETE FROM NguoiDung WHERE MaNguoiDung = :id", ['id' => $userId]);
+            $this->db->commit();
+            return $res;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
     }
 
     public function getAllTeachers(): array {

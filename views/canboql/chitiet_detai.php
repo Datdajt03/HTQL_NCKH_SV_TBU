@@ -326,6 +326,8 @@ require dirname(__DIR__) . '/layouts/header.php';
                     <?php endif; ?>
                 </div>
             </div>
+        </div>
+
         <!-- TAB: PHIẾU ĐỀ XUẤT (MẪU 02) -->
         <div id="tab-doc-dexuat" class="tab-content" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; background: var(--bg-card); padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);" class="no-print">

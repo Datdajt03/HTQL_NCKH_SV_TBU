@@ -70,10 +70,10 @@ require dirname(__DIR__) . '/layouts/header.php';
                                     <button type="button" class="btn btn-sm btn-secondary" onclick='editDot(<?= json_encode($d, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)' title="Chỉnh sửa đợt NCKH">
                                         <?= ViewHelper::icon('edit') ?> Sửa
                                     </button>
-                                    <form method="POST" action="<?= App::url('index.php?action=cb-quanly-dot') ?>" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đợt NCKH <?= ViewHelper::e($d['MaDot']) ?>?');">
+                                    <form method="POST" action="<?= App::url('index.php?action=cb-quanly-dot') ?>" style="display:inline;" onsubmit="return confirm('CẢNH BÁO: Xóa đợt NCKH <?= ViewHelper::e($d['MaDot']) ?> sẽ xóa toàn bộ các hội đồng, thông báo và đề tài thuộc đợt này. Bạn có chắc chắn muốn xóa không?');">
                                         <input type="hidden" name="sub_action" value="delete_dot">
                                         <input type="hidden" name="madot" value="<?= ViewHelper::e($d['MaDot']) ?>">
-                                        <button type="submit" class="btn btn-sm btn-danger" <?= ((int)($d['TongSoDeTai'] ?? 0) > 0) ? 'title="Đợt đã có đề tài không thể xóa trực tiếp"' : 'title="Xóa đợt"' ?>>
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Xóa đợt NCKH (xóa an toàn toàn bộ đề tài & hội đồng thuộc đợt)">
                                             <?= ViewHelper::icon('trash') ?>
                                         </button>
                                     </form>
@@ -124,7 +124,7 @@ require dirname(__DIR__) . '/layouts/header.php';
                                         <button type="button" class="btn btn-sm btn-secondary" onclick='editDirection(<?= json_encode($h, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)' title="Chỉnh sửa hướng NC">
                                             <?= ViewHelper::icon('edit') ?>
                                         </button>
-                                        <form method="POST" action="<?= App::url('index.php?action=cb-quanly-dot') ?>" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa hướng nghiên cứu <?= ViewHelper::e($h['MaHuongNC']) ?>?');">
+                                        <form method="POST" action="<?= App::url('index.php?action=cb-quanly-dot') ?>" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa hướng nghiên cứu <?= ViewHelper::e($h['MaHuongNC']) ?>? Các đề tài thuộc hướng này (nếu có) sẽ được tự động bảo toàn và chuyển sang hướng nghiên cứu liên ngành/khác.');">
                                             <input type="hidden" name="sub_action" value="delete_direction">
                                             <input type="hidden" name="mahuongnc" value="<?= ViewHelper::e($h['MaHuongNC']) ?>">
                                             <button type="submit" class="btn btn-sm btn-danger" title="Xóa hướng NC">
