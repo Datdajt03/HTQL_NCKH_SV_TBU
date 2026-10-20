@@ -12,7 +12,7 @@ require dirname(__DIR__) . '/layouts/header.php';
     </div>
     <div style="display: flex; gap: 8px;">
         <a href="<?= App::url('index.php?action=gioi-thieu#cua-so-web') ?>" class="btn btn-secondary" style="gap: 6px;" title="Cửa Sổ Trực Tuyến utb.edu.vn">
-            <img src="<?= App::url('pic/logo.jpg') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/logo.jpg') ?>';" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover;"> Website UTB (Sơn La) ↗
+            <img src="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover;"> Website UTB (Sơn La) ↗
         </a>
         <a href="<?= App::url('index.php?action=sv-dangky-detai') ?>" class="btn btn-primary">
             <?= ViewHelper::icon('file-plus', '', 16) ?> Đăng Ký Đề Tài Mới

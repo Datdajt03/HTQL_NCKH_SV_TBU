@@ -17,7 +17,7 @@ require dirname(__DIR__) . '/layouts/header.php';
         <div style="text-align: center; margin-bottom: 28px;">
             <a href="<?= App::url('index.php?action=gioi-thieu') ?>" style="text-decoration: none; display: inline-block;" title="Cổng Thông tin Trường Đại học Tây Bắc (Sơn La)">
                 <div style="width: 82px; height: 82px; margin: 0 auto 14px; border-radius: 50%; overflow: hidden; box-shadow: 0 10px 25px -4px rgba(37, 99, 235, 0.3); border: 3px solid rgba(255,255,255,0.9); background: #ffffff; transition: transform 0.25s ease;">
-                    <img src="<?= App::url('pic/logo.jpg') ?>" alt="Logo ĐH Tây Bắc" onerror="this.onerror=null; this.src='<?= App::url('public/images/logo.jpg') ?>';" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                    <img src="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo ĐH Tây Bắc" onerror="this.onerror=null; this.src='<?= App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                 </div>
             </a>
             <h1 style="font-size: 24px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; margin-bottom: 6px;">

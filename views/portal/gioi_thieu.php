@@ -16,7 +16,7 @@ $defaultEmbedUrl = "https://utb.edu.vn/gioi-thieu/";
     <header class="portal-public-nav" style="position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); background: rgba(15, 23, 42, 0.92); border-bottom: 1px solid var(--border-color); padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
         <a href="<?= App::url('index.php?action=gioi-thieu') ?>" class="portal-brand-block" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
             <div class="portal-brand-avatar" style="width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: #fff; border: 2px solid rgba(37,99,235,0.4); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">
-                <img src="<?= App::url('pic/logo.jpg') ?>" alt="Logo Trường Đại học Tây Bắc" onerror="this.onerror=null; this.src='<?= App::url('public/images/logo.jpg') ?>';" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo Trường Đại học Tây Bắc" onerror="this.onerror=null; this.src='<?= App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             <div class="portal-brand-text">
                 <h1 style="font-size: 15px; font-weight: 800; color: #fff; margin: 0; letter-spacing: 0.02em;">TRƯỜNG ĐẠI HỌC TÂY BẮC</h1>
@@ -78,7 +78,7 @@ $defaultEmbedUrl = "https://utb.edu.vn/gioi-thieu/";
     <div style="margin-bottom: 24px; padding: 20px 24px; background: linear-gradient(135deg, rgba(37,99,235,0.12) 0%, rgba(124,58,237,0.12) 100%); border: 1px solid rgba(37,99,235,0.25); border-radius: var(--radius-lg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
         <div style="display: flex; align-items: center; gap: 16px;">
             <div style="width: 52px; height: 52px; border-radius: 50%; overflow: hidden; background: #fff; border: 2px solid rgba(37,99,235,0.5); box-shadow: 0 4px 14px rgba(37,99,235,0.3); flex-shrink: 0;">
-                <img src="<?= App::url('pic/logo.jpg') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/logo.jpg') ?>';" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             <div>
                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -571,7 +571,7 @@ $defaultEmbedUrl = "https://utb.edu.vn/gioi-thieu/";
             <div style="max-width: 520px;">
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                     <div style="width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: #fff; border: 2px solid rgba(37,99,235,0.4); box-shadow: var(--shadow-sm); flex-shrink: 0;">
-                        <img src="<?= App::url('pic/logo.jpg') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/logo.jpg') ?>';" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     <div>
                         <div style="font-weight: 800; font-size: 16px; color: var(--text-primary);"><?= ViewHelper::e($universityInfo['name']) ?></div>

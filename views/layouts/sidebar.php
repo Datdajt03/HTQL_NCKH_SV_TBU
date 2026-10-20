@@ -9,7 +9,7 @@ $action = $_GET['action'] ?? '';
 <aside class="app-sidebar">
     <a href="<?= App::url('index.php?action=gioi-thieu') ?>" class="sidebar-header" title="Cổng Thông tin Trường Đại học Tây Bắc (Sơn La)">
         <div class="brand-logo">
-            <img src="<?= App::url('pic/logo.jpg') ?>" alt="Logo ĐH Tây Bắc" class="brand-logo-img" onerror="this.onerror=null; this.src='<?= App::url('public/images/logo.jpg') ?>';">
+            <img src="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo ĐH Tây Bắc" class="brand-logo-img" onerror="this.onerror=null; this.src='<?= App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';">
         </div>
         <div class="brand-text">
             <h1>ĐẠI HỌC TÂY BẮC</h1>

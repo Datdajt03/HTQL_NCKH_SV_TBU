@@ -97,7 +97,7 @@ require dirname(__DIR__) . '/layouts/header.php';
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button type="button" class="btn btn-secondary" onclick="document.querySelector('[data-target=\'tab-utb-main\']').click();" style="font-size: 13px; gap: 6px;" title="Cửa Sổ Trực Tuyến Website Trường ĐH Tây Bắc (utb.edu.vn)">
-                <img src="<?= App::url('pic/logo.jpg') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/logo.jpg') ?>';" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover;"> Website UTB (Sơn La) ↗
+                <img src="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover;"> Website UTB (Sơn La) ↗
             </button>
             <a href="<?= App::url('index.php?action=cb-quanly-nguoidung') ?>" class="btn btn-secondary" style="font-size: 13px;">
                 <?= ViewHelper::icon('users') ?> Quản lý Tài khoản (<?= $userStats['total'] ?? 0 ?>)

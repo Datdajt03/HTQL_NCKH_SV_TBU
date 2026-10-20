@@ -120,7 +120,7 @@ require dirname(__DIR__) . '/layouts/header.php';
             </div>
             <div style="display: flex; gap: 10px; white-space: nowrap; flex-wrap: wrap;">
                 <button type="button" class="btn btn-secondary" onclick="document.querySelector('[data-target=\'tab-utb-main\']').click();" title="Xem Cửa Sổ Trực Tuyến Trường ĐH Tây Bắc (utb.edu.vn)">
-                    <img src="<?= App::url('pic/logo.jpg') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/logo.jpg') ?>';" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover;"> Cửa Sổ UTB (Sơn La) ↗
+                    <img src="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover;"> Cửa Sổ UTB (Sơn La) ↗
                 </button>
                 <a href="<?= App::url('index.php?action=sv-thongtin-nckh') ?>" class="btn btn-secondary">
                     <?= ViewHelper::icon('book-open', '', 15) ?> Biểu Mẫu & Hướng Dẫn

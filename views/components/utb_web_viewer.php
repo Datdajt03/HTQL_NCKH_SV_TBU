@@ -69,7 +69,7 @@ if ($viewerId === 'portal') {
 
             <div style="display: flex; align-items: center; gap: 8px; margin-left: 4px;">
                 <div style="width: 22px; height: 22px; border-radius: 50%; overflow: hidden; background: #fff; border: 1px solid rgba(37,99,235,0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <img src="<?= App::url('pic/logo.jpg') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/logo.jpg') ?>';" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <span style="font-weight: 800; font-size: 13.5px; color: var(--text-primary); white-space: nowrap;"><?= htmlspecialchars($title) ?></span>
                 <span class="badge" style="background: rgba(16,185,129,0.15); color: #059669; font-weight: 700; font-size: 11px;"><?= htmlspecialchars($badgeText) ?></span>

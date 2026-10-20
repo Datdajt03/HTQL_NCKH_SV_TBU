@@ -90,7 +90,7 @@ require dirname(__DIR__) . '/layouts/header.php';
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
             <button type="button" class="btn btn-secondary btn-sm" onclick="document.querySelector('[data-target=\'tab-utb-main\']').click();" style="font-size: 12.5px; gap: 6px;" title="Cửa Sổ Trực Tuyến utb.edu.vn">
-                <img src="<?= App::url('pic/logo.jpg') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/logo.jpg') ?>';" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover;">
+                <img src="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover;">
                 <span>Cửa Sổ UTB (Sơn La) ↗</span>
             </button>
             <a href="https://utb.edu.vn/gioi-thieu/" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="font-size: 12.5px; gap: 6px;">
@@ -191,7 +191,7 @@ require dirname(__DIR__) . '/layouts/header.php';
             </div>
             <div style="display: flex; gap: 8px;">
                 <button type="button" class="btn btn-sm btn-secondary" onclick="document.querySelector('[data-target=\'tab-utb-main\']').click();" style="display: inline-flex; align-items: center; gap: 6px;" title="Cổng Giới thiệu Trường ĐH Tây Bắc (Sơn La)">
-                    <img src="<?= App::url('pic/logo.jpg') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/logo.jpg') ?>';" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover;"> Giới Thiệu UTB (Sơn La)
+                    <img src="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover;"> Giới Thiệu UTB (Sơn La)
                 </button>
                 <a href="<?= App::url('index.php?action=gv-theodoi-tiendo') ?>" class="btn btn-sm btn-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
                     <?= ViewHelper::icon('trending-up', '', 14) ?> Theo Dõi Tiến Độ

@@ -377,7 +377,7 @@ class NckhFormHelper {
                 <tr>
                     <td style="width: 48%; text-align: center; vertical-align: top;">
                         <div style="margin-bottom: 6px;">
-                            <img src="<?= \App\Config\App::url('pic/logo.jpg') ?>" alt="Logo ĐH Tây Bắc" onerror="this.onerror=null; this.src='<?= \App\Config\App::url('public/images/logo.jpg') ?>';" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; display: inline-block;">
+                            <img src="<?= \App\Config\App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo ĐH Tây Bắc" onerror="this.onerror=null; this.src='<?= \App\Config\App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; display: inline-block;">
                         </div>
                         <div class="nckh-co-quan"><?= ViewHelper::e($data['co_quan_chu_quan'] ?? 'BỘ GIÁO DỤC VÀ ĐÀO TẠO') ?></div>
                         <div class="nckh-don-vi"><?= ViewHelper::e($data['don_vi'] ?? 'TRƯỜNG ĐẠI HỌC TÂY BẮC') ?></div>
@@ -507,7 +507,7 @@ class NckhFormHelper {
                 <tr>
                     <td style="width: 48%; text-align: center; vertical-align: top;">
                         <div style="margin-bottom: 6px;">
-                            <img src="<?= \App\Config\App::url('pic/logo.jpg') ?>" alt="Logo ĐH Tây Bắc" onerror="this.onerror=null; this.src='<?= \App\Config\App::url('public/images/logo.jpg') ?>';" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; display: inline-block;">
+                            <img src="<?= \App\Config\App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo ĐH Tây Bắc" onerror="this.onerror=null; this.src='<?= \App\Config\App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; display: inline-block;">
                         </div>
                         <div class="nckh-co-quan"><?= ViewHelper::e($data['co_quan_chu_quan'] ?? 'BỘ GIÁO DỤC VÀ ĐÀO TẠO') ?></div>
                         <div class="nckh-don-vi"><?= ViewHelper::e($data['don_vi'] ?? 'TRƯỜNG ĐẠI HỌC TÂY BẮC') ?></div>

@@ -18,8 +18,8 @@ $currentTheme = $_COOKIE['theme'] ?? 'light';
     <title><?= ViewHelper::e($pageTitle) ?> - <?= App::UNIVERSITY_SHORT ?> (UTB Sơn La)</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/jpeg" href="<?= App::url('pic/logo.jpg') ?>">
-    <link rel="apple-touch-icon" href="<?= App::url('pic/logo.jpg') ?>">
+    <link rel="icon" type="image/png" href="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>">
+    <link rel="apple-touch-icon" href="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>">
     
     <!-- Instant Theme Synchronization to prevent FOUC -->
     <script>

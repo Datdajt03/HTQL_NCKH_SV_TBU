@@ -37,7 +37,7 @@ $currentUserId = AuthHelper::id();
 
         <!-- NÚT XEM CỔNG TRỰC TUYẾN TRƯỜNG ĐH TÂY BẮC (SƠN LA) -->
         <a href="<?= App::url('index.php?action=gioi-thieu#cua-so-web') ?>" class="btn btn-sm btn-secondary" style="font-size: 12px; gap: 6px; padding: 6px 12px; border-radius: var(--radius-sm);" title="Cổng Giới thiệu & Cửa Sổ Trực Tuyến utb.edu.vn (Sơn La)">
-            <img src="<?= App::url('pic/logo.jpg') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/logo.jpg') ?>';" style="width: 18px; height: 18px; border-radius: 50%; object-fit: cover;">
+            <img src="<?= App::url('pic/Logo-Dai-Hoc-Tay-Bac.png') ?>" alt="Logo UTB" onerror="this.onerror=null; this.src='<?= App::url('public/images/Logo-Dai-Hoc-Tay-Bac.png') ?>';" style="width: 18px; height: 18px; border-radius: 50%; object-fit: cover;">
             <span>Website UTB (Sơn La) ↗</span>
         </a>
 

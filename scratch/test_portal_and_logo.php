@@ -64,19 +64,19 @@ function httpLogin(string $username, string $password, string $cookieFile): bool
 
 // 1. Kiểm tra tồn tại và tính hợp lệ của Logo
 echo PHP_EOL . "--- 1. Kiểm tra File Logo Trường ĐH Tây Bắc ---" . PHP_EOL;
-$logoPath = dirname(__DIR__) . '/pic/logo.jpg';
-assertTest(file_exists($logoPath), "File pic/logo.jpg tồn tại");
-assertTest(filesize($logoPath) > 50000, "File pic/logo.jpg có dung lượng hợp lệ: " . number_format(filesize($logoPath)) . " bytes");
+$logoPath = dirname(__DIR__) . '/pic/Logo-Dai-Hoc-Tay-Bac.png';
+assertTest(file_exists($logoPath), "File pic/Logo-Dai-Hoc-Tay-Bac.png tồn tại");
+assertTest(filesize($logoPath) > 50000, "File pic/Logo-Dai-Hoc-Tay-Bac.png có dung lượng hợp lệ: " . number_format(filesize($logoPath)) . " bytes");
 
-$publicLogoPath = dirname(__DIR__) . '/public/images/logo.jpg';
-assertTest(file_exists($publicLogoPath), "File backup public/images/logo.jpg tồn tại");
+$publicLogoPath = dirname(__DIR__) . '/public/images/Logo-Dai-Hoc-Tay-Bac.png';
+assertTest(file_exists($publicLogoPath), "File backup public/images/Logo-Dai-Hoc-Tay-Bac.png tồn tại");
 
 // 2. Kiểm tra Giao diện chính mặc định (Root URL / index.php không tham số)
 echo PHP_EOL . "--- 2. Kiểm tra Giao diện chính (Default Landing Page) ---" . PHP_EOL;
 $resDefault = httpGet($baseUrl);
 assertTest($resDefault['code'] === 200, "Truy cập index.php mặc định trả về HTTP 200 OK");
 assertTest(strpos($resDefault['body'], 'TRƯỜNG ĐẠI HỌC TÂY BẮC') !== false, "Giao diện chính mặc định hiển thị Cổng Giới thiệu & Cửa Sổ Trực Tuyến ĐH Tây Bắc");
-assertTest(strpos($resDefault['body'], 'pic/logo.jpg') !== false, "Giao diện chính có logo Trường ĐH Tây Bắc");
+assertTest(strpos($resDefault['body'], 'pic/Logo-Dai-Hoc-Tay-Bac.png') !== false, "Giao diện chính có logo Trường ĐH Tây Bắc");
 assertTest(strpos($resDefault['body'], 'utb_web_iframe') !== false, "Giao diện chính có iframe nhúng web trường");
 
 // 2.1 Kiểm tra các alias portal & home
@@ -112,13 +112,13 @@ assertTest(strpos($resPublic['body'], 'Thái Bình') === false, "Tuyệt đối 
 echo PHP_EOL . "--- 4. Kiểm tra Logo trên trang Login & Register ---" . PHP_EOL;
 $resLogin = httpGet($baseUrl . '?action=login');
 assertTest($resLogin['code'] === 200, "Trang Login trả về 200 OK");
-assertTest(strpos($resLogin['body'], 'pic/logo.jpg') !== false, "Trang Login có logo pic/logo.jpg");
+assertTest(strpos($resLogin['body'], 'pic/Logo-Dai-Hoc-Tay-Bac.png') !== false, "Trang Login có logo pic/Logo-Dai-Hoc-Tay-Bac.png");
 assertTest(strpos($resLogin['body'], 'TRƯỜNG ĐẠI HỌC TÂY BẮC') !== false, "Trang Login có tên Trường ĐH Tây Bắc");
 assertTest(strpos($resLogin['body'], 'action=gioi-thieu') !== false, "Trang Login có nút liên kết tới Cổng Giới thiệu UTB");
 
 $resRegister = httpGet($baseUrl . '?action=register');
 assertTest($resRegister['code'] === 200, "Trang Register trả về 200 OK");
-assertTest(strpos($resRegister['body'], 'pic/logo.jpg') !== false, "Trang Register có logo pic/logo.jpg");
+assertTest(strpos($resRegister['body'], 'pic/Logo-Dai-Hoc-Tay-Bac.png') !== false, "Trang Register có logo pic/Logo-Dai-Hoc-Tay-Bac.png");
 assertTest(strpos($resRegister['body'], 'TRƯỜNG ĐẠI HỌC TÂY BẮC') !== false, "Trang Register có tên Trường ĐH Tây Bắc");
 assertTest(strpos($resRegister['body'], 'action=gioi-thieu') !== false, "Trang Register có nút liên kết tới Cổng Giới thiệu UTB");
 
@@ -131,7 +131,7 @@ assertTest($logged, "Đăng nhập SV001 thành công");
 
 $resSvDash = httpGet($baseUrl . '?action=sv-dashboard', $cookieFile);
 assertTest($resSvDash['code'] === 200, "Dashboard Sinh viên trả về 200 OK");
-assertTest(strpos($resSvDash['body'], 'pic/logo.jpg') !== false, "Sidebar Sinh viên có logo pic/logo.jpg");
+assertTest(strpos($resSvDash['body'], 'pic/Logo-Dai-Hoc-Tay-Bac.png') !== false, "Sidebar Sinh viên có logo pic/Logo-Dai-Hoc-Tay-Bac.png");
 assertTest(strpos($resSvDash['body'], 'ĐẠI HỌC TÂY BẮC') !== false, "Sidebar Sinh viên có tên ĐẠI HỌC TÂY BẮC");
 assertTest(strpos($resSvDash['body'], 'sv_utb_iframe') !== false, "Dashboard Sinh viên có Cửa Sổ UTB Web iframe");
 assertTest(strpos($resSvDash['body'], 'dash-mode-tabs') !== false, "Dashboard Sinh viên có thanh chuyển đổi giao diện chính kép");
@@ -147,13 +147,13 @@ if (file_exists($cookieFile)) unlink($cookieFile);
 echo PHP_EOL . "--- 6. Kiểm tra biểu mẫu NCKH (Phiếu Đề Xuất & Thuyết Minh) ---" . PHP_EOL;
 $sampleDX = NckhFormHelper::getSampleDeXuatData();
 $htmlDX = NckhFormHelper::renderPhieuDeXuatHtml($sampleDX);
-assertTest(strpos($htmlDX, 'pic/logo.jpg') !== false, "Phiếu Đề Xuất (Mẫu 02) có logo pic/logo.jpg");
+assertTest(strpos($htmlDX, 'pic/Logo-Dai-Hoc-Tay-Bac.png') !== false, "Phiếu Đề Xuất (Mẫu 02) có logo pic/Logo-Dai-Hoc-Tay-Bac.png");
 assertTest(strpos($htmlDX, 'TRƯỜNG ĐẠI HỌC TÂY BẮC') !== false, "Phiếu Đề Xuất có tên TRƯỜNG ĐẠI HỌC TÂY BẮC");
 assertTest(strpos($htmlDX, 'Sơn La, ngày') !== false, "Phiếu Đề Xuất ghi nhận địa danh Sơn La");
 
 $sampleTM = NckhFormHelper::getSampleThuyetMinhData();
 $htmlTM = NckhFormHelper::renderThuyetMinhHtml($sampleTM);
-assertTest(strpos($htmlTM, 'pic/logo.jpg') !== false, "Thuyết Minh Đề Tài (Mẫu 01) có logo pic/logo.jpg");
+assertTest(strpos($htmlTM, 'pic/Logo-Dai-Hoc-Tay-Bac.png') !== false, "Thuyết Minh Đề Tài (Mẫu 01) có logo pic/Logo-Dai-Hoc-Tay-Bac.png");
 assertTest(strpos($htmlTM, 'TRƯỜNG ĐẠI HỌC TÂY BẮC') !== false, "Thuyết Minh Đề Tài có tên TRƯỜNG ĐẠI HỌC TÂY BẮC");
 assertTest(strpos($htmlTM, 'Sơn La, ngày') !== false, "Thuyết Minh Đề Tài ghi nhận địa danh Sơn La");
 
